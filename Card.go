@@ -31,7 +31,7 @@ type Card struct {
 }
 
 func (c Card) Value() []int {
-	if c.rank > Ten {
+	if c.rank >= Ten {
 		return []int{10}
 	}
 	if c.rank == Ace {
