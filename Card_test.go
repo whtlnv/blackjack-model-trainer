@@ -7,27 +7,27 @@ import (
 )
 
 func TestAceCardValue(t *testing.T) {
-	c := Card{Ace, Spades}
-	
-	got := c.Value()
+	card := Card{Ace, Spades}
+
+	got := card.Value()
 	want := []int{1, 11}
 
 	assert.ElementsMatch(t, got, want)
 }
 
 func TestFaceCardValue(t *testing.T) {
-	c := Card{Jack, Hearts}
-	
-	got := c.Value()
+	card := Card{Jack, Hearts}
+
+	got := card.Value()
 	want := []int{10}
 
 	assert.ElementsMatch(t, got, want)
 }
 
 func TestNumberCardValue(t *testing.T) {
-	c := Card{Two, Clubs}
-	
-	got := c.Value()
+	card := Card{Two, Clubs}
+
+	got := card.Value()
 	want := []int{2}
 
 	assert.ElementsMatch(t, got, want)
