@@ -8,6 +8,8 @@ const (
 	Clubs
 )
 
+var SUITS = [...]Suit{Spades, Hearts, Diamonds, Clubs}
+
 type Rank int
 const (
 	Ace = 1
@@ -24,6 +26,8 @@ const (
 	Queen = 12
 	King = 13
 )
+
+var RANKS = [...]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
 
 type Card struct {
 	rank Rank 
