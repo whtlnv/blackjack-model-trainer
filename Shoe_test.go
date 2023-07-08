@@ -16,10 +16,10 @@ func TestShoeInitialization(t *testing.T) {
 		assert.Equal(t, got, want)
 	})
 
-	// t.Run("Shoe is shuffled", func(t *testing.T) {
-	// 	shoe2 := NewShoe(deckCount)
-	// 	assert.NotEqual(t, shoe.cards, shoe2.cards)
-	// })
+	t.Run("Shoe is shuffled", func(t *testing.T) {
+		shoe2 := NewShoe(deckCount)
+		assert.NotEqual(t, shoe.cards, shoe2.cards)
+	})
 }
 
 func TestShoePeek(t *testing.T) {
