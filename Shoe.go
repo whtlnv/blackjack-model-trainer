@@ -1,18 +1,35 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 )
 
 type Shoe struct {
-	decks int
-	cards []Card
+	decks  int
+	cards  []Card
+	cursor int
+}
+
+type CursorOutOfBoundsError struct {
+	cursor int
+	offset int
+	size   int
+}
+
+func (e *CursorOutOfBoundsError) Error() string {
+	return fmt.Sprintf(
+		"Shoe cursor out of bounds. Shoe of size %d had cursor at %d, and received offset of %d",
+		e.size,
+		e.cursor,
+		e.offset,
+	)
 }
 
 // Factory
 
 func NewShoe(decks int) *Shoe {
-	shoe := &Shoe{decks, []Card{}}
+	shoe := &Shoe{decks, []Card{}, 0}
 
 	shoe.build()
 	shoe.shuffle()
@@ -26,11 +43,23 @@ func (shoe *Shoe) Size() int {
 	return len(shoe.cards)
 }
 
-func (shoe *Shoe) Peek(cursor int, count int) []Card {
+func (shoe *Shoe) Peek(count int) []Card {
+	cursor := shoe.cursor
+
 	if cursor+count > len(shoe.cards) {
 		count = len(shoe.cards) - cursor
 	}
 	return shoe.cards[cursor : cursor+count]
+}
+
+func (shoe *Shoe) AdvanceCursor(offset int) (int, error) {
+	advanceTo := shoe.cursor + offset
+	if advanceTo > len(shoe.cards) {
+		return shoe.cursor, &CursorOutOfBoundsError{shoe.cursor, offset, len(shoe.cards)}
+	}
+
+	shoe.cursor = advanceTo
+	return shoe.cursor, nil
 }
 
 // Private methods
