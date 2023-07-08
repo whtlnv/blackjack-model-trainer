@@ -13,7 +13,7 @@ func TestShoeInitialization(t *testing.T) {
 	t.Run("Shoe has deckCount * 52 cards", func(t *testing.T) {
 		got := shoe.Size()
 		want := deckCount * 52
-		assert.Equal(t, got, want)
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("Shoe is shuffled", func(t *testing.T) {
