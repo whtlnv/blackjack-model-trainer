@@ -1,7 +1,7 @@
 package main
 
 type Shoe struct {
-	Decks int
+	decks int
 	cards []Card
 }
 
