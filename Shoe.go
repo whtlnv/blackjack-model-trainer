@@ -17,6 +17,13 @@ func NewShoe(decks int) *Shoe {
 	return s
 }
 
-func (s *Shoe) Size() int {
-	return len(s.cards)
+func (shoe *Shoe) Size() int {
+	return len(shoe.cards)
+}
+
+func (shoe *Shoe) Peek(cursor int, count int) []Card {
+	if cursor+count > len(shoe.cards) {
+		count = len(shoe.cards) - cursor
+	}
+	return shoe.cards[cursor : cursor+count]
 }
