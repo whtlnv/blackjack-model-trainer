@@ -3,6 +3,10 @@ package main
 import "github.com/samber/lo"
 
 type Hand []Card
+type HandScore struct {
+	Soft int
+	Hard int
+}
 
 func (hand Hand) Values() []int {
 	var calculateSum func(cards []Card, index int, currentSum int) []int
@@ -26,16 +30,25 @@ func (hand Hand) Values() []int {
 	return lo.Uniq(calculateSum(hand, 0, 0))
 }
 
-func (hand Hand) Score() (score int, isBusted bool) {
+func (hand Hand) Score() (score HandScore, isBusted bool) {
 	values := hand.Values()
 
 	notBusted := lo.Filter(values, func(value int, _ int) bool {
 		return value <= 21
 	})
 
-	if len(notBusted) == 0 {
-		return lo.Max(values), true
+	// TODO: remove this when confident
+	if len(notBusted) > 2 {
+		panic("A hand should never have more than 2 values")
 	}
 
-	return lo.Max(notBusted), false
+	if len(notBusted) > 0 {
+		score = HandScore{Soft: lo.Min(notBusted), Hard: lo.Max(notBusted)}
+		isBusted = false
+	} else {
+		score = HandScore{Soft: lo.Min(values), Hard: lo.Max(values)}
+		isBusted = true
+	}
+
+	return score, isBusted
 }

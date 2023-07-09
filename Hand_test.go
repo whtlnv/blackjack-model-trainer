@@ -56,7 +56,7 @@ func TestHandScore(t *testing.T) {
 		}
 
 		got, isBusted := hand.Score()
-		want := 19
+		want := HandScore{19, 19}
 
 		assert.Equal(t, want, got)
 		assert.Equal(t, false, isBusted)
@@ -66,11 +66,10 @@ func TestHandScore(t *testing.T) {
 		hand := Hand{
 			Card{Ace, Spades},
 			Card{King, Hearts},
-			Card{Queen, Diamonds},
 		}
 
 		got, isBusted := hand.Score()
-		want := 21
+		want := HandScore{11, 21}
 
 		assert.Equal(t, want, got)
 		assert.Equal(t, false, isBusted)
@@ -84,7 +83,7 @@ func TestHandScore(t *testing.T) {
 		}
 
 		got, isBusted := hand.Score()
-		want := 15
+		want := HandScore{5, 15}
 
 		assert.Equal(t, want, got)
 		assert.Equal(t, false, isBusted)
@@ -98,7 +97,7 @@ func TestHandScore(t *testing.T) {
 		}
 
 		got, isBusted := hand.Score()
-		want := 30
+		want := HandScore{30, 30}
 
 		assert.Equal(t, want, got)
 		assert.Equal(t, true, isBusted)
