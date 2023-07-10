@@ -126,24 +126,24 @@ func (strategy *Strategy) parseActionMap(raw []byte) {
 }
 
 func (strategy *Strategy) parseHardMap(slicedRaw []byte) map[DealerHand]map[PlayerHand]PlayerAction {
-	columns := []DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := []PlayerHand{HardFive, HardSix, HardSeven, HardEight, HardNine, HardTen, HardEleven, HardTwelve, HardThirteen, HardFourteen, HardFifteen, HardSixteen, HardSeventeen, HardEighteen, HardNineteen, HardTwenty}
+	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [16]PlayerHand{HardFive, HardSix, HardSeven, HardEight, HardNine, HardTen, HardEleven, HardTwelve, HardThirteen, HardFourteen, HardFifteen, HardSixteen, HardSeventeen, HardEighteen, HardNineteen, HardTwenty}
 
-	return stringToMap(slicedRaw, columns, rows)
+	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
 func (strategy *Strategy) parseSoftMap(slicedRaw []byte) map[DealerHand]map[PlayerHand]PlayerAction {
-	columns := []DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := []PlayerHand{SoftThirteen, SoftFourteen, SoftFifteen, SoftSixteen, SoftSeventeen, SoftEighteen, SoftNineteen, SoftTwenty}
+	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [9]PlayerHand{SoftThirteen, SoftFourteen, SoftFifteen, SoftSixteen, SoftSeventeen, SoftEighteen, SoftNineteen, SoftTwenty}
 
-	return stringToMap(slicedRaw, columns, rows)
+	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
 func (strategy *Strategy) parsePairMap(slicedRaw []byte) map[DealerHand]map[PlayerHand]PlayerAction {
-	columns := []DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := []PlayerHand{PairTwos, PairThrees, PairFours, PairFives, PairSixes, PairSevens, PairEights, PairNines, PairTens, PairAces}
+	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [10]PlayerHand{PairTwos, PairThrees, PairFours, PairFives, PairSixes, PairSevens, PairEights, PairNines, PairTens, PairAces}
 
-	return stringToMap(slicedRaw, columns, rows)
+	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
 // Helper methods
