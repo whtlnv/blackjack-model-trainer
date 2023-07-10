@@ -130,6 +130,32 @@ func TestIsPair(t *testing.T) {
 	})
 }
 
+func TestHasSoftValue(t *testing.T) {
+	t.Run("Should return true if soft value", func(t *testing.T) {
+		hand := Hand{
+			Card{Ace, Spades},
+			Card{King, Spades},
+		}
+
+		got := hand.HasSoftValue()
+		want := true
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return false if not soft value", func(t *testing.T) {
+		hand := Hand{
+			Card{Queen, Spades},
+			Card{King, Spades},
+		}
+
+		got := hand.HasSoftValue()
+		want := false
+
+		assert.Equal(t, want, got)
+	})
+}
+
 // This is for player
 // func TestHandSplit(t *testing.T) {
 // 	t.Run("Should split a hand", func(t *testing.T) {

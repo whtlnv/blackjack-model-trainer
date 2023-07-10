@@ -56,3 +56,8 @@ func (hand Hand) Score() (score HandScore, isBusted bool) {
 func (hand Hand) IsPair() bool {
 	return hand[0].rank == hand[1].rank
 }
+
+func (hand Hand) HasSoftValue() bool {
+	score, _ := hand.Score()
+	return score.Soft != score.Hard
+}
