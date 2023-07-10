@@ -52,3 +52,7 @@ func (hand Hand) Score() (score HandScore, isBusted bool) {
 
 	return score, isBusted
 }
+
+func (hand Hand) IsPair() bool {
+	return hand[0].rank == hand[1].rank
+}

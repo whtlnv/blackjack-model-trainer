@@ -103,3 +103,47 @@ func TestHandScore(t *testing.T) {
 		assert.Equal(t, true, isBusted)
 	})
 }
+
+func TestIsPair(t *testing.T) {
+	t.Run("Should return true if pair", func(t *testing.T) {
+		hand := Hand{
+			Card{Queen, Spades},
+			Card{Queen, Spades},
+		}
+
+		got := hand.IsPair()
+		want := true
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return false if not pair", func(t *testing.T) {
+		hand := Hand{
+			Card{Queen, Spades},
+			Card{King, Spades},
+		}
+
+		got := hand.IsPair()
+		want := false
+
+		assert.Equal(t, want, got)
+	})
+}
+
+// This is for player
+// func TestHandSplit(t *testing.T) {
+// 	t.Run("Should split a hand", func(t *testing.T) {
+// 		hand := Hand{
+// 			Card{Queen, Spades},
+// 			Card{Queen, Spades},
+// 		}
+
+// 		got := hand.Split()
+// 		want := []Hand{
+// 			Hand{Card{Queen, Spades}},
+// 			Hand{Card{Queen, Spades}},
+// 		}
+
+// 		assert.Equal(t, want, got)
+// 	})
+// }
