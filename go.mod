@@ -1,4 +1,4 @@
-module whtlnv/blackjack
+module github.com/whtlnv/blackjack-model-trainer
 
 go 1.20
 
