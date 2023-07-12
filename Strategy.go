@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type DealerHand int
 
 const (
@@ -122,6 +124,10 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 // Private methods
 
 func (strategy *Strategy) parseActionMap(raw []byte) error {
+	if len(raw) != HandCount {
+		return fmt.Errorf("expected strategy length to be %d, got %d", HandCount, len(raw))
+	}
+
 	rawHardMapStartsAt := 0
 	rawSoftMapStartsAt := rawHardMapStartsAt + (DealerHandCount * PlayerHardHandCount)
 	rawPairMapStartsAt := rawSoftMapStartsAt + (DealerHandCount * PlayerSoftHandCount)

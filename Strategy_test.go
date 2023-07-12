@@ -110,10 +110,10 @@ func TestStrategyParsing(t *testing.T) {
 	}
 }
 
-// func TestStrategyParsingErrors(t *testing.T) {
-// 	t.Run("Should handle invalid strategy length", func(t *testing.T) {
-// 		raw := bytes.Repeat([]byte("H"), 1)
-// 		_, err := NewStrategy(raw)
-// 		assert.Error(t, err)
-// 	})
-// }
+func TestStrategyParsingErrors(t *testing.T) {
+	t.Run("Should handle invalid strategy length", func(t *testing.T) {
+		raw := bytes.Repeat([]byte("H"), 1)
+		_, err := NewStrategy(raw)
+		assert.Error(t, err)
+	})
+}
