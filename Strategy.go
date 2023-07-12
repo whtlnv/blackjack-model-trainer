@@ -15,6 +15,8 @@ const (
 	DealerTwo   DealerHand = 2
 )
 
+const DealerHandCount = 10
+
 type PlayerHand int
 
 const (
@@ -37,6 +39,8 @@ const (
 	// HardFour 		PlayerHand = 4 // This equals {2,2} -> PairTwos, which takes precedence
 )
 
+const PlayerHardHandCount = 16
+
 const (
 	SoftTwenty    PlayerHand = 20
 	SoftNineteen  PlayerHand = 19
@@ -48,6 +52,8 @@ const (
 	SoftThirteen  PlayerHand = 13
 	// SoftTwelve    PlayerHand = 12 // This equals {A,A} -> PairAces, which takes precedence
 )
+
+const PlayerSoftHandCount = 8
 
 const (
 	PairTens   PlayerHand = 20
@@ -61,6 +67,11 @@ const (
 	PairTwos   PlayerHand = 4
 	PairAces   PlayerHand = 11
 )
+
+const PlayerPairHandCount = 10
+
+const PlayerHandCount = PlayerHardHandCount + PlayerSoftHandCount + PlayerPairHandCount
+const HandCount = PlayerHandCount * DealerHandCount
 
 type PlayerAction string
 
@@ -79,12 +90,16 @@ type Strategy struct {
 
 // Factory
 
-func NewStrategy(raw []byte) Strategy {
-	strategy := Strategy{}
+func NewStrategy(raw []byte) (strategy Strategy, err error) {
+	strategy = Strategy{}
 
-	strategy.parseActionMap(raw)
+	err = strategy.parseActionMap(raw)
 
-	return strategy
+	if err != nil {
+		return strategy, err
+	}
+
+	return strategy, nil
 }
 
 // Public methods
@@ -106,15 +121,10 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 
 // Private methods
 
-func (strategy *Strategy) parseActionMap(raw []byte) {
-	dealerHandCount := 10
-	playerHardHandCount := 16
-	playerSoftHandCount := 8
-	// playerPairHandCount := 10
-
+func (strategy *Strategy) parseActionMap(raw []byte) error {
 	rawHardMapStartsAt := 0
-	rawSoftMapStartsAt := rawHardMapStartsAt + (dealerHandCount * playerHardHandCount)
-	rawPairMapStartsAt := rawSoftMapStartsAt + (dealerHandCount * playerSoftHandCount)
+	rawSoftMapStartsAt := rawHardMapStartsAt + (DealerHandCount * PlayerHardHandCount)
+	rawPairMapStartsAt := rawSoftMapStartsAt + (DealerHandCount * PlayerSoftHandCount)
 
 	rawHardMap := raw[rawHardMapStartsAt:rawSoftMapStartsAt]
 	rawSoftMap := raw[rawSoftMapStartsAt:rawPairMapStartsAt]
@@ -123,25 +133,27 @@ func (strategy *Strategy) parseActionMap(raw []byte) {
 	strategy.HardMap = strategy.parseHardMap(rawHardMap)
 	strategy.SoftMap = strategy.parseSoftMap(rawSoftMap)
 	strategy.PairMap = strategy.parsePairMap(rawPairMap)
+
+	return nil
 }
 
 func (strategy *Strategy) parseHardMap(slicedRaw []byte) map[PlayerHand]map[DealerHand]PlayerAction {
-	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := [16]PlayerHand{HardFive, HardSix, HardSeven, HardEight, HardNine, HardTen, HardEleven, HardTwelve, HardThirteen, HardFourteen, HardFifteen, HardSixteen, HardSeventeen, HardEighteen, HardNineteen, HardTwenty}
+	columns := [DealerHandCount]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [PlayerHardHandCount]PlayerHand{HardFive, HardSix, HardSeven, HardEight, HardNine, HardTen, HardEleven, HardTwelve, HardThirteen, HardFourteen, HardFifteen, HardSixteen, HardSeventeen, HardEighteen, HardNineteen, HardTwenty}
 
 	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
 func (strategy *Strategy) parseSoftMap(slicedRaw []byte) map[PlayerHand]map[DealerHand]PlayerAction {
-	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := [8]PlayerHand{SoftThirteen, SoftFourteen, SoftFifteen, SoftSixteen, SoftSeventeen, SoftEighteen, SoftNineteen, SoftTwenty}
+	columns := [DealerHandCount]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [PlayerSoftHandCount]PlayerHand{SoftThirteen, SoftFourteen, SoftFifteen, SoftSixteen, SoftSeventeen, SoftEighteen, SoftNineteen, SoftTwenty}
 
 	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
 func (strategy *Strategy) parsePairMap(slicedRaw []byte) map[PlayerHand]map[DealerHand]PlayerAction {
-	columns := [10]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
-	rows := [10]PlayerHand{PairTwos, PairThrees, PairFours, PairFives, PairSixes, PairSevens, PairEights, PairNines, PairTens, PairAces}
+	columns := [DealerHandCount]DealerHand{DealerTwo, DealerThree, DealerFour, DealerFive, DealerSix, DealerSeven, DealerEight, DealerNine, DealerTen, DealerAce}
+	rows := [PlayerPairHandCount]PlayerHand{PairTwos, PairThrees, PairFours, PairFives, PairSixes, PairSevens, PairEights, PairNines, PairTens, PairAces}
 
 	return stringToMap(slicedRaw, columns[:], rows[:])
 }

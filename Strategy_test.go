@@ -61,7 +61,7 @@ func TestStrategyParsing(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	strategy := NewStrategy(raw)
+	strategy, _ := NewStrategy(raw)
 
 	testCases := []struct {
 		desc           string
@@ -109,3 +109,11 @@ func TestStrategyParsing(t *testing.T) {
 		})
 	}
 }
+
+// func TestStrategyParsingErrors(t *testing.T) {
+// 	t.Run("Should handle invalid strategy length", func(t *testing.T) {
+// 		raw := bytes.Repeat([]byte("H"), 1)
+// 		_, err := NewStrategy(raw)
+// 		assert.Error(t, err)
+// 	})
+// }
