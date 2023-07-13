@@ -18,7 +18,12 @@ type Strategy struct {
 func NewStrategy(raw []byte) (Strategy, error) {
 	strategy := Strategy{}
 
-	err := strategy.parseActionMap(raw)
+	err := validateRawStrategy(raw)
+	if err != nil {
+		return strategy, err
+	}
+
+	err = strategy.parseActionMap(raw)
 	if err != nil {
 		return strategy, err
 	}
@@ -60,11 +65,6 @@ func (strategy *Strategy) Bet() int {
 // Private methods
 
 func (strategy *Strategy) parseActionMap(raw []byte) error {
-	err := validateRawStrategy(raw)
-	if err != nil {
-		return err
-	}
-
 	rawHardMapStartsAt := 0
 	rawSoftMapStartsAt := rawHardMapStartsAt + (DealerHandCount * PlayerHardHandCount)
 	rawPairMapStartsAt := rawSoftMapStartsAt + (DealerHandCount * PlayerSoftHandCount)
@@ -102,11 +102,6 @@ func (strategy *Strategy) parsePairMap(slicedRaw []byte) map[PlayerHand]map[Deal
 }
 
 func (strategy *Strategy) parseBankroll(raw []byte) error {
-	err := validateRawStrategy(raw)
-	if err != nil {
-		return err
-	}
-
 	rawHardMapStartsAt := 0
 	rawBankrollStartsAt := rawHardMapStartsAt + (DealerHandCount * PlayerHardHandCount) + (DealerHandCount * PlayerSoftHandCount) + (DealerHandCount * PlayerPairHandCount)
 
