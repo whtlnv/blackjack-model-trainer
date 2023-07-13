@@ -1,20 +1,28 @@
 package blackjack
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Strategy struct {
-	PairMap map[PlayerHand]map[DealerHand]PlayerAction
-	SoftMap map[PlayerHand]map[DealerHand]PlayerAction
-	HardMap map[PlayerHand]map[DealerHand]PlayerAction
+	PairMap         map[PlayerHand]map[DealerHand]PlayerAction
+	SoftMap         map[PlayerHand]map[DealerHand]PlayerAction
+	HardMap         map[PlayerHand]map[DealerHand]PlayerAction
+	InitialBankroll int
 }
 
 // Factory
 
-func NewStrategy(raw []byte) (strategy Strategy, err error) {
-	strategy = Strategy{}
+func NewStrategy(raw []byte) (Strategy, error) {
+	strategy := Strategy{}
 
-	err = strategy.parseActionMap(raw)
+	err := strategy.parseActionMap(raw)
+	if err != nil {
+		return strategy, err
+	}
 
+	err = strategy.parseBankroll(raw)
 	if err != nil {
 		return strategy, err
 	}
@@ -42,8 +50,9 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 // Private methods
 
 func (strategy *Strategy) parseActionMap(raw []byte) error {
-	if len(raw) != HandCount {
-		return fmt.Errorf("expected strategy length to be %d, got %d", HandCount, len(raw))
+	err := validateRawStrategy(raw)
+	if err != nil {
+		return err
 	}
 
 	rawHardMapStartsAt := 0
@@ -82,7 +91,37 @@ func (strategy *Strategy) parsePairMap(slicedRaw []byte) map[PlayerHand]map[Deal
 	return stringToMap(slicedRaw, columns[:], rows[:])
 }
 
+func (strategy *Strategy) parseBankroll(raw []byte) error {
+	err := validateRawStrategy(raw)
+	if err != nil {
+		return err
+	}
+
+	rawHardMapStartsAt := 0
+	rawBankrollStartsAt := rawHardMapStartsAt + (DealerHandCount * PlayerHardHandCount) + (DealerHandCount * PlayerSoftHandCount) + (DealerHandCount * PlayerPairHandCount)
+
+	rawBankrollHex := raw[rawBankrollStartsAt : rawBankrollStartsAt+bankrollLength]
+	parsed, parseErr := strconv.ParseInt(string(rawBankrollHex), 16, 32)
+
+	if parseErr != nil {
+		return parseErr
+	}
+
+	strategy.InitialBankroll = int(parsed)
+
+	return nil
+}
+
 // Helper methods
+
+func validateRawStrategy(raw []byte) error {
+	expectedLength := HandCount + bankrollLength + betLength
+	if len(raw) != expectedLength {
+		return fmt.Errorf("expected strategy length to be %d, got %d", expectedLength, len(raw))
+	}
+
+	return nil
+}
 
 func stringToMap(raw []byte, columns []DealerHand, rows []PlayerHand) map[PlayerHand]map[DealerHand]PlayerAction {
 	parsedMap := make(map[PlayerHand]map[DealerHand]PlayerAction)

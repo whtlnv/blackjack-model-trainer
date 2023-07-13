@@ -81,3 +81,6 @@ const (
 	Double PlayerAction = "D"
 	Split  PlayerAction = "P"
 )
+
+const bankrollLength = 4
+const betLength = 4

@@ -2,7 +2,6 @@ package blackjack
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
@@ -49,14 +48,10 @@ func getTestStrategy() ([]byte, error) {
 	noLineBreaks := bytes.ReplaceAll(raw, []byte("\n"), []byte(""))
 	noSpaces := bytes.ReplaceAll(noLineBreaks, []byte(" "), []byte(""))
 
-	if len(noSpaces) != 340 {
-		return nil, fmt.Errorf("Expected strategy length to be 340, got %d", len(noSpaces))
-	}
-
 	return noSpaces, nil
 }
 
-func TestStrategyParsing(t *testing.T) {
+func TestStrategyActionParsing(t *testing.T) {
 	raw, err := getTestStrategy()
 	if err != nil {
 		t.Fatal(err)
@@ -108,6 +103,20 @@ func TestStrategyParsing(t *testing.T) {
 			assert.Equal(t, want, got)
 		})
 	}
+}
+
+func TestStrategyBetParsing(t *testing.T) {
+	raw, err := getTestStrategy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy, _ := NewStrategy(raw)
+
+	t.Run("Should parse initial bankroll", func(t *testing.T) {
+		got := strategy.InitialBankroll
+		want := 1000
+		assert.Equal(t, want, got)
+	})
 }
 
 func TestStrategyParsingErrors(t *testing.T) {
