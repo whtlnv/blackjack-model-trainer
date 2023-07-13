@@ -10,6 +10,7 @@ type Strategy struct {
 	SoftMap         map[PlayerHand]map[DealerHand]PlayerAction
 	HardMap         map[PlayerHand]map[DealerHand]PlayerAction
 	InitialBankroll int
+	MainGameBetMap  map[int]int
 }
 
 // Factory
@@ -23,6 +24,11 @@ func NewStrategy(raw []byte) (Strategy, error) {
 	}
 
 	err = strategy.parseBankroll(raw)
+	if err != nil {
+		return strategy, err
+	}
+
+	err = strategy.parseMainBettingStrategy(raw)
 	if err != nil {
 		return strategy, err
 	}
@@ -45,6 +51,10 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	}
 
 	return strategy.HardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+}
+
+func (strategy *Strategy) Bet() int {
+	return strategy.MainGameBetMap[0]
 }
 
 // Private methods
@@ -112,10 +122,34 @@ func (strategy *Strategy) parseBankroll(raw []byte) error {
 	return nil
 }
 
+func (strategy *Strategy) parseMainBettingStrategy(raw []byte) error {
+	parsedMap := make(map[int]int)
+
+	rawHardMapStartsAt := 0
+	rawBettingStartsAt :=
+		rawHardMapStartsAt +
+			(DealerHandCount * PlayerHardHandCount) +
+			(DealerHandCount * PlayerSoftHandCount) +
+			(DealerHandCount * PlayerPairHandCount) +
+			bankrollLength
+
+	rawBetHex := raw[rawBettingStartsAt : rawBettingStartsAt+mainBetLength]
+	parsed, parseErr := strconv.ParseInt(string(rawBetHex), 16, 32)
+
+	if parseErr != nil {
+		return parseErr
+	}
+
+	parsedMap[0] = int(parsed)
+	strategy.MainGameBetMap = parsedMap
+
+	return nil
+}
+
 // Helper methods
 
 func validateRawStrategy(raw []byte) error {
-	expectedLength := HandCount + bankrollLength + betLength
+	expectedLength := HandCount + bankrollLength + mainBetLength
 	if len(raw) != expectedLength {
 		return fmt.Errorf("expected strategy length to be %d, got %d", expectedLength, len(raw))
 	}

@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Helpers
+
 func openTextFile(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -50,6 +52,8 @@ func getTestStrategy() ([]byte, error) {
 
 	return noSpaces, nil
 }
+
+// Tests
 
 func TestStrategyActionParsing(t *testing.T) {
 	raw, err := getTestStrategy()
@@ -105,7 +109,7 @@ func TestStrategyActionParsing(t *testing.T) {
 	}
 }
 
-func TestStrategyBetParsing(t *testing.T) {
+func TestPlayerInitializationParsing(t *testing.T) {
 	raw, err := getTestStrategy()
 	if err != nil {
 		t.Fatal(err)
@@ -115,6 +119,20 @@ func TestStrategyBetParsing(t *testing.T) {
 	t.Run("Should parse initial bankroll", func(t *testing.T) {
 		got := strategy.InitialBankroll
 		want := 1000
+		assert.Equal(t, want, got)
+	})
+}
+
+func TestStrategyBetParsing(t *testing.T) {
+	raw, err := getTestStrategy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy, _ := NewStrategy(raw)
+
+	t.Run("Should handle main game bet", func(t *testing.T) {
+		got := strategy.Bet( /* shoe? */ )
+		want := 1
 		assert.Equal(t, want, got)
 	})
 }

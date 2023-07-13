@@ -83,4 +83,4 @@ const (
 )
 
 const bankrollLength = 4
-const betLength = 4
+const mainBetLength = 4
