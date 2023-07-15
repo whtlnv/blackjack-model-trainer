@@ -6,11 +6,12 @@ import (
 )
 
 type Strategy struct {
-	PairMap         map[PlayerHand]map[DealerHand]PlayerAction
-	SoftMap         map[PlayerHand]map[DealerHand]PlayerAction
-	HardMap         map[PlayerHand]map[DealerHand]PlayerAction
+	pairMap        map[PlayerHand]map[DealerHand]PlayerAction
+	softMap        map[PlayerHand]map[DealerHand]PlayerAction
+	hardMap        map[PlayerHand]map[DealerHand]PlayerAction
+	mainGameBetMap map[int]int
+
 	InitialBankroll int
-	MainGameBetMap  map[int]int
 }
 
 // Factory
@@ -48,18 +49,18 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	playerScore, _ := playerHand.Score()
 
 	if playerHand.IsPair() {
-		return strategy.PairMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+		return strategy.pairMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
 	}
 
 	if playerHand.HasSoftValue() {
-		return strategy.SoftMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Soft)]
+		return strategy.softMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Soft)]
 	}
 
-	return strategy.HardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+	return strategy.hardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
 }
 
 func (strategy *Strategy) Bet() int {
-	return strategy.MainGameBetMap[0]
+	return strategy.mainGameBetMap[0]
 }
 
 // Private methods
@@ -73,9 +74,9 @@ func (strategy *Strategy) parseActionMap(raw []byte) error {
 	rawSoftMap := raw[rawSoftMapStartsAt:rawPairMapStartsAt]
 	rawPairMap := raw[rawPairMapStartsAt:]
 
-	strategy.HardMap = strategy.parseHardMap(rawHardMap)
-	strategy.SoftMap = strategy.parseSoftMap(rawSoftMap)
-	strategy.PairMap = strategy.parsePairMap(rawPairMap)
+	strategy.hardMap = strategy.parseHardMap(rawHardMap)
+	strategy.softMap = strategy.parseSoftMap(rawSoftMap)
+	strategy.pairMap = strategy.parsePairMap(rawPairMap)
 
 	return nil
 }
@@ -136,7 +137,7 @@ func (strategy *Strategy) parseMainBettingStrategy(raw []byte) error {
 	}
 
 	parsedMap[0] = int(parsed)
-	strategy.MainGameBetMap = parsedMap
+	strategy.mainGameBetMap = parsedMap
 
 	return nil
 }
