@@ -7,8 +7,8 @@ type Player struct {
 
 // Factory
 
-func NewPlayer(strategy Strategyish) Player {
-	player := Player{}
+func NewPlayer(strategy Strategyish) *Player {
+	player := &Player{}
 	player.strategy = strategy
 	player.Bankroll = strategy.GetInitialBankroll()
 
