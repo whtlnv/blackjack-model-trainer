@@ -5,19 +5,24 @@ import (
 	"strconv"
 )
 
-type Strategy struct {
-	pairMap        map[PlayerHand]map[DealerHand]PlayerAction
-	softMap        map[PlayerHand]map[DealerHand]PlayerAction
-	hardMap        map[PlayerHand]map[DealerHand]PlayerAction
-	mainGameBetMap map[int]int
+type Strategyish interface {
+	Play(playerHand Hand, dealerHand Hand) PlayerAction
+	Bet() int
+	GetInitialBankroll() int
+}
 
-	InitialBankroll int
+type Strategy struct {
+	pairMap         map[PlayerHand]map[DealerHand]PlayerAction
+	softMap         map[PlayerHand]map[DealerHand]PlayerAction
+	hardMap         map[PlayerHand]map[DealerHand]PlayerAction
+	mainGameBetMap  map[int]int
+	initialBankroll int
 }
 
 // Factory
 
-func NewStrategy(raw []byte) (Strategy, error) {
-	strategy := Strategy{}
+func NewStrategy(raw []byte) (*Strategy, error) {
+	strategy := &Strategy{}
 
 	err := validateRawStrategy(raw)
 	if err != nil {
@@ -43,6 +48,10 @@ func NewStrategy(raw []byte) (Strategy, error) {
 }
 
 // Public methods
+
+func (strategy *Strategy) GetInitialBankroll() int {
+	return strategy.initialBankroll
+}
 
 func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	dealerScore, _ := dealerHand.Score()
@@ -113,7 +122,7 @@ func (strategy *Strategy) parseBankroll(raw []byte) error {
 		return parseErr
 	}
 
-	strategy.InitialBankroll = int(parsed)
+	strategy.initialBankroll = int(parsed)
 
 	return nil
 }

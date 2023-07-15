@@ -1,27 +1,46 @@
 package blackjack
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+// Helpers
+
+type strategyMock struct {
+	initialBankroll int
+}
+
+func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
+	return Hit
+}
+
+func (strategy *strategyMock) Bet() int {
+	return 1
+}
+
+func (strategy *strategyMock) GetInitialBankroll() int {
+	return strategy.initialBankroll
+}
+
+// Tests
+
 func TestPlayerInitialization(t *testing.T) {
 	t.Run("Should set player initial bankroll", func(t *testing.T) {
-		rawStrategy := bytes.Repeat([]byte("H"), HandCount)
-		strategy, _ := NewStrategy(rawStrategy)
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
 		player := NewPlayer(strategy)
 
-		assert.Equal(t, strategy.InitialBankroll, player.Bankroll)
+		assert.Equal(t, strategy.initialBankroll, player.Bankroll)
 	})
 }
 
 func TestPlayerBet(t *testing.T) {
-	alwaysHitStrategy := bytes.Repeat([]byte("H"), HandCount)
+	strategy := &strategyMock{}
+	strategy.initialBankroll = 100
+
 	t.Run("Should decide to play a hand if has funds", func(t *testing.T) {
-		rawStrategy := append(alwaysHitStrategy, []byte("00100001")...)
-		strategy, _ := NewStrategy(rawStrategy)
 		player := NewPlayer(strategy)
 
 		willBet, ammount := player.Bet( /* shoe? */ )
@@ -30,18 +49,14 @@ func TestPlayerBet(t *testing.T) {
 	})
 
 	t.Run("Should decide not to play a hand if has no funds", func(t *testing.T) {
-		rawStrategy := append(alwaysHitStrategy, []byte("00000001")...)
-		strategy, _ := NewStrategy(rawStrategy)
 		player := NewPlayer(strategy)
-		player.Bankroll = 0 // Redundant, but explicit
+		player.Bankroll = 0
 
 		willBet, _ := player.Bet( /* shoe? */ )
 		assert.False(t, willBet)
 	})
 
 	t.Run("Bet should be deducted from bankroll", func(t *testing.T) {
-		rawStrategy := append(alwaysHitStrategy, []byte("00100001")...)
-		strategy, _ := NewStrategy(rawStrategy)
 		player := NewPlayer(strategy)
 		player.Bankroll = 10
 

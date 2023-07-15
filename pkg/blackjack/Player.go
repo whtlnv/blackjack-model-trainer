@@ -1,16 +1,16 @@
 package blackjack
 
 type Player struct {
-	strategy Strategy
+	strategy Strategyish
 	Bankroll int
 }
 
 // Factory
 
-func NewPlayer(strategy Strategy) Player {
+func NewPlayer(strategy Strategyish) Player {
 	player := Player{}
 	player.strategy = strategy
-	player.Bankroll = strategy.InitialBankroll
+	player.Bankroll = strategy.GetInitialBankroll()
 
 	return player
 }

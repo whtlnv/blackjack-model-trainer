@@ -117,7 +117,7 @@ func TestPlayerInitializationParsing(t *testing.T) {
 	strategy, _ := NewStrategy(raw)
 
 	t.Run("Should parse initial bankroll", func(t *testing.T) {
-		got := strategy.InitialBankroll
+		got := strategy.GetInitialBankroll()
 		want := 1000
 		assert.Equal(t, want, got)
 	})
