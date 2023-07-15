@@ -22,5 +22,8 @@ func (player *Player) Bet() (bool, int) {
 	if bet > player.Bankroll {
 		return false, 0
 	}
+
+	player.Bankroll -= bet
+
 	return true, bet
 }
