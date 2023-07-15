@@ -17,6 +17,7 @@ func NewPlayer(strategy Strategy) Player {
 
 // Public methods
 
-func (player *Player) ShouldBet() (bool, int) {
-	return true, 1
+func (player *Player) Bet() (bool, int) {
+	bet := player.strategy.Bet()
+	return true, bet
 }

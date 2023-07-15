@@ -17,7 +17,7 @@ func main() {
 	strategy, _ := blackjack.NewStrategy(rawStrategy)
 	player := blackjack.NewPlayer(strategy)
 
-	willBet, ammount := player.ShouldBet()
+	willBet, ammount := player.Bet()
 
 	fmt.Println("Got a player")
 	fmt.Println(willBet, ammount)

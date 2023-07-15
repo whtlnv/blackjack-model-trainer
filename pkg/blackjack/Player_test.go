@@ -17,14 +17,25 @@ func TestPlayerInitialization(t *testing.T) {
 	})
 }
 
-func TestPlayerTurn(t *testing.T) {
-	t.Run("Should decide to play a hand", func(t *testing.T) {
-		rawStrategy := bytes.Repeat([]byte("H"), HandCount)
+func TestPlayerBet(t *testing.T) {
+	alwaysHitStrategy := bytes.Repeat([]byte("H"), HandCount)
+	t.Run("Should decide to play a hand if has funds", func(t *testing.T) {
+		rawStrategy := append(alwaysHitStrategy, []byte("00FF0001")...)
 		strategy, _ := NewStrategy(rawStrategy)
 		player := NewPlayer(strategy)
 
-		willBet, ammount := player.ShouldBet( /* shoe? */ )
+		willBet, ammount := player.Bet( /* shoe? */ )
 		assert.True(t, willBet)
 		assert.Equal(t, 1, ammount)
 	})
+
+	// t.Run("Should decide not to play a hand if has no funds", func(t *testing.T) {
+	// 	rawStrategy := append(alwaysHitStrategy, []byte("00000001")...)
+	// 	strategy, _ := NewStrategy(rawStrategy)
+	// 	player := NewPlayer(strategy)
+	// 	// player.Bankroll = 0
+
+	// 	willBet, _ := player.Bet( /* shoe? */ )
+	// 	assert.False(t, willBet)
+	// })
 }
