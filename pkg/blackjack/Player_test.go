@@ -29,13 +29,13 @@ func TestPlayerBet(t *testing.T) {
 		assert.Equal(t, 1, ammount)
 	})
 
-	// t.Run("Should decide not to play a hand if has no funds", func(t *testing.T) {
-	// 	rawStrategy := append(alwaysHitStrategy, []byte("00000001")...)
-	// 	strategy, _ := NewStrategy(rawStrategy)
-	// 	player := NewPlayer(strategy)
-	// 	// player.Bankroll = 0
+	t.Run("Should decide not to play a hand if has no funds", func(t *testing.T) {
+		rawStrategy := append(alwaysHitStrategy, []byte("00000001")...)
+		strategy, _ := NewStrategy(rawStrategy)
+		player := NewPlayer(strategy)
+		player.Bankroll = 0 // Redundant, but explicit
 
-	// 	willBet, _ := player.Bet( /* shoe? */ )
-	// 	assert.False(t, willBet)
-	// })
+		willBet, _ := player.Bet( /* shoe? */ )
+		assert.False(t, willBet)
+	})
 }

@@ -19,5 +19,8 @@ func NewPlayer(strategy Strategy) Player {
 
 func (player *Player) Bet() (bool, int) {
 	bet := player.strategy.Bet()
+	if bet > player.Bankroll {
+		return false, 0
+	}
 	return true, bet
 }
