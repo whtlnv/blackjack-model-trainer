@@ -49,6 +49,10 @@ func (c *Card) SetHole() {
 	c.hole = true
 }
 
+func (c *Card) SetUpcard() {
+	c.hole = false
+}
+
 func (c Card) Value() []int {
 	if c.hole {
 		return []int{0}
