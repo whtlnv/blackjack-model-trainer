@@ -70,32 +70,32 @@ func TestStrategyActionParsing(t *testing.T) {
 	}{
 		{
 			desc:           "Should handle hard values",
-			playerHand:     Hand{Card{King, Clubs}, Card{Five, Clubs}},
-			dealerHand:     Hand{Card{Two, Clubs}},
+			playerHand:     Hand{NewCard(King, Clubs), NewCard(Five, Clubs)},
+			dealerHand:     Hand{NewCard(Two, Clubs)},
 			expectedAction: Stay,
 		},
 		{
 			desc:           "Should handle soft values",
-			playerHand:     Hand{Card{Ace, Clubs}, Card{Five, Clubs}},
-			dealerHand:     Hand{Card{Six, Clubs}},
+			playerHand:     Hand{NewCard(Ace, Clubs), NewCard(Five, Clubs)},
+			dealerHand:     Hand{NewCard(Six, Clubs)},
 			expectedAction: Double,
 		},
 		{
 			desc:           "Should handle pairs",
-			playerHand:     Hand{Card{Four, Clubs}, Card{Four, Hearts}},
-			dealerHand:     Hand{Card{Four, Clubs}},
+			playerHand:     Hand{NewCard(Four, Clubs), NewCard(Four, Hearts)},
+			dealerHand:     Hand{NewCard(Four, Clubs)},
 			expectedAction: Hit,
 		},
 		{
 			desc:           "Should handle pairs",
-			playerHand:     Hand{Card{Nine, Clubs}, Card{Nine, Hearts}},
-			dealerHand:     Hand{Card{Seven, Clubs}},
+			playerHand:     Hand{NewCard(Nine, Clubs), NewCard(Nine, Hearts)},
+			dealerHand:     Hand{NewCard(Seven, Clubs)},
 			expectedAction: Stay,
 		},
 		{
 			desc:           "Should handle two aces",
-			playerHand:     Hand{Card{Ace, Spades}, Card{Ace, Hearts}},
-			dealerHand:     Hand{Card{Two, Clubs}},
+			playerHand:     Hand{NewCard(Ace, Spades), NewCard(Ace, Hearts)},
+			dealerHand:     Hand{NewCard(Two, Clubs)},
 			expectedAction: Split,
 		},
 	}

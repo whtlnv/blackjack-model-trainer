@@ -7,7 +7,7 @@ import (
 )
 
 func TestAceCardValue(t *testing.T) {
-	card := Card{Ace, Spades}
+	card := NewCard(Ace, Spades)
 
 	got := card.Value()
 	want := []int{1, 11}
@@ -16,7 +16,7 @@ func TestAceCardValue(t *testing.T) {
 }
 
 func TestFaceCardValue(t *testing.T) {
-	card := Card{Jack, Hearts}
+	card := NewCard(Jack, Hearts)
 
 	got := card.Value()
 	want := []int{10}
@@ -25,7 +25,7 @@ func TestFaceCardValue(t *testing.T) {
 }
 
 func TestNumberCardValue(t *testing.T) {
-	card := Card{Two, Clubs}
+	card := NewCard(Two, Clubs)
 
 	got := card.Value()
 	want := []int{2}

@@ -9,7 +9,7 @@ import (
 func TestDealingACard(t *testing.T) {
 	t.Run("Should deal a card to a hand", func(t *testing.T) {
 		hand := Hand{}
-		card := Card{Queen, Spades}
+		card := NewCard(Queen, Spades)
 
 		hand.Deal(card)
 
@@ -19,7 +19,7 @@ func TestDealingACard(t *testing.T) {
 
 	t.Run("Should append a card to a hand", func(t *testing.T) {
 		hand := Hand{{King, Spades}}
-		card := Card{Queen, Spades}
+		card := NewCard(Queen, Spades)
 
 		hand.Deal(card)
 
@@ -31,9 +31,9 @@ func TestDealingACard(t *testing.T) {
 func TestHandValues(t *testing.T) {
 	t.Run("Should return the value of a hand", func(t *testing.T) {
 		hand := Hand{
-			Card{Two, Spades},
-			Card{Seven, Hearts},
-			Card{Queen, Diamonds},
+			NewCard(Two, Spades),
+			NewCard(Seven, Hearts),
+			NewCard(Queen, Diamonds),
 		}
 
 		got := hand.Values()
@@ -44,9 +44,9 @@ func TestHandValues(t *testing.T) {
 
 	t.Run("Should return the correct score for Ace", func(t *testing.T) {
 		hand := Hand{
-			Card{Ace, Spades},
-			Card{King, Hearts},
-			Card{Queen, Diamonds},
+			NewCard(Ace, Spades),
+			NewCard(King, Hearts),
+			NewCard(Queen, Diamonds),
 		}
 
 		got := hand.Values()
@@ -57,9 +57,9 @@ func TestHandValues(t *testing.T) {
 
 	t.Run("Should return the correct score for several Aces", func(t *testing.T) {
 		hand := Hand{
-			Card{Ace, Spades},
-			Card{Ace, Spades},
-			Card{Three, Diamonds},
+			NewCard(Ace, Spades),
+			NewCard(Ace, Spades),
+			NewCard(Three, Diamonds),
 		}
 
 		got := hand.Values()
@@ -72,9 +72,9 @@ func TestHandValues(t *testing.T) {
 func TestHandScore(t *testing.T) {
 	t.Run("Should return the highest score of a hand", func(t *testing.T) {
 		hand := Hand{
-			Card{Two, Spades},
-			Card{Seven, Hearts},
-			Card{Queen, Diamonds},
+			NewCard(Two, Spades),
+			NewCard(Seven, Hearts),
+			NewCard(Queen, Diamonds),
 		}
 
 		got, isBusted := hand.Score()
@@ -86,8 +86,8 @@ func TestHandScore(t *testing.T) {
 
 	t.Run("Should return the correct score for Ace", func(t *testing.T) {
 		hand := Hand{
-			Card{Ace, Spades},
-			Card{King, Hearts},
+			NewCard(Ace, Spades),
+			NewCard(King, Hearts),
 		}
 
 		got, isBusted := hand.Score()
@@ -99,9 +99,9 @@ func TestHandScore(t *testing.T) {
 
 	t.Run("Should return the correct score for several Aces", func(t *testing.T) {
 		hand := Hand{
-			Card{Ace, Spades},
-			Card{Ace, Spades},
-			Card{Three, Diamonds},
+			NewCard(Ace, Spades),
+			NewCard(Ace, Spades),
+			NewCard(Three, Diamonds),
 		}
 
 		got, isBusted := hand.Score()
@@ -113,9 +113,9 @@ func TestHandScore(t *testing.T) {
 
 	t.Run("Should return true if busted", func(t *testing.T) {
 		hand := Hand{
-			Card{Queen, Spades},
-			Card{Queen, Spades},
-			Card{Queen, Diamonds},
+			NewCard(Queen, Spades),
+			NewCard(Queen, Spades),
+			NewCard(Queen, Diamonds),
 		}
 
 		got, isBusted := hand.Score()
@@ -129,8 +129,8 @@ func TestHandScore(t *testing.T) {
 func TestIsPair(t *testing.T) {
 	t.Run("Should return true if pair", func(t *testing.T) {
 		hand := Hand{
-			Card{Queen, Spades},
-			Card{Queen, Spades},
+			NewCard(Queen, Spades),
+			NewCard(Queen, Spades),
 		}
 
 		got := hand.IsPair()
@@ -141,8 +141,8 @@ func TestIsPair(t *testing.T) {
 
 	t.Run("Should return false if not pair", func(t *testing.T) {
 		hand := Hand{
-			Card{Queen, Spades},
-			Card{King, Spades},
+			NewCard(Queen, Spades),
+			NewCard(King, Spades),
 		}
 
 		got := hand.IsPair()
@@ -155,8 +155,8 @@ func TestIsPair(t *testing.T) {
 func TestHasSoftValue(t *testing.T) {
 	t.Run("Should return true if soft value", func(t *testing.T) {
 		hand := Hand{
-			Card{Ace, Spades},
-			Card{King, Spades},
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
 		}
 
 		got := hand.HasSoftValue()
@@ -167,8 +167,8 @@ func TestHasSoftValue(t *testing.T) {
 
 	t.Run("Should return false if not soft value", func(t *testing.T) {
 		hand := Hand{
-			Card{Queen, Spades},
-			Card{King, Spades},
+			NewCard(Queen, Spades),
+			NewCard(King, Spades),
 		}
 
 		got := hand.HasSoftValue()
@@ -182,14 +182,14 @@ func TestHasSoftValue(t *testing.T) {
 // func TestHandSplit(t *testing.T) {
 // 	t.Run("Should split a hand", func(t *testing.T) {
 // 		hand := Hand{
-// 			Card{Queen, Spades},
-// 			Card{Queen, Spades},
+// 			NewCard(Queen, Spades),
+// 			NewCard(Queen, Spades),
 // 		}
 
 // 		got := hand.Split()
 // 		want := []Hand{
-// 			Hand{Card{Queen, Spades}},
-// 			Hand{Card{Queen, Spades}},
+// 			Hand{NewCard(Queen, Spades)},
+// 			Hand{NewCard(Queen, Spades)},
 // 		}
 
 // 		assert.Equal(t, want, got)

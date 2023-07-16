@@ -68,7 +68,7 @@ func (shoe *Shoe) build() {
 	for i := 0; i < shoe.decks; i++ {
 		for _, suit := range SUITS {
 			for _, rank := range RANKS {
-				card := Card{rank, suit}
+				card := NewCard(rank, suit)
 				shoe.cards = append(shoe.cards, card)
 			}
 		}

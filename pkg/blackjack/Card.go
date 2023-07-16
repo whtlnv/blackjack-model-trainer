@@ -36,6 +36,14 @@ type Card struct {
 	suit Suit
 }
 
+// Constructor
+
+func NewCard(rank Rank, suit Suit) Card {
+	return Card{rank: rank, suit: suit}
+}
+
+// Public methods
+
 func (c Card) Value() []int {
 	if c.rank >= Ten {
 		return []int{10}
