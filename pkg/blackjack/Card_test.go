@@ -32,3 +32,13 @@ func TestNumberCardValue(t *testing.T) {
 
 	assert.ElementsMatch(t, want, got)
 }
+
+func TestHoleCardValue(t *testing.T) {
+	card := NewCard(Two, Clubs)
+	card.SetHole()
+
+	got := card.Value()
+	want := []int{0}
+
+	assert.ElementsMatch(t, want, got)
+}

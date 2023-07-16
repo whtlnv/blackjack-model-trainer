@@ -34,9 +34,10 @@ var RANKS = [...]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten,
 type Card struct {
 	rank Rank
 	suit Suit
+	hole bool
 }
 
-// Constructor
+// Factory
 
 func NewCard(rank Rank, suit Suit) Card {
 	return Card{rank: rank, suit: suit}
@@ -44,12 +45,22 @@ func NewCard(rank Rank, suit Suit) Card {
 
 // Public methods
 
+func (c *Card) SetHole() {
+	c.hole = true
+}
+
 func (c Card) Value() []int {
+	if c.hole {
+		return []int{0}
+	}
+
 	if c.rank >= Ten {
 		return []int{10}
 	}
+
 	if c.rank == Ace {
 		return []int{1, 11}
 	}
+
 	return []int{int(c.rank)}
 }
