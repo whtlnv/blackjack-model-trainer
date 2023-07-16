@@ -43,7 +43,7 @@ func TestHoleCardValue(t *testing.T) {
 	assert.ElementsMatch(t, want, got)
 }
 
-func TestUpCardValue(t *testing.T) {
+func TestUpcardValue(t *testing.T) {
 	card := NewCard(Two, Clubs)
 	card.SetHole()
 	card.SetUpcard()
