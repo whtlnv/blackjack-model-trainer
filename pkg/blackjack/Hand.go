@@ -12,7 +12,7 @@ func (hand *Hand) Deal(card Card) {
 	*hand = append(*hand, card)
 }
 
-func (hand Hand) Values() []int {
+func (hand *Hand) Values() []int {
 	var calculateSum func(cards []Card, index int, currentSum int) []int
 
 	calculateSum = func(cards []Card, index int, currentSum int) []int {
@@ -31,10 +31,10 @@ func (hand Hand) Values() []int {
 		return sums
 	}
 
-	return lo.Uniq(calculateSum(hand, 0, 0))
+	return lo.Uniq(calculateSum(*hand, 0, 0))
 }
 
-func (hand Hand) Score() (score HandScore, isBusted bool) {
+func (hand *Hand) Score() (score HandScore, isBusted bool) {
 	values := hand.Values()
 
 	notBusted := lo.Filter(values, func(value int, _ int) bool {
@@ -57,11 +57,11 @@ func (hand Hand) Score() (score HandScore, isBusted bool) {
 	return score, isBusted
 }
 
-func (hand Hand) IsPair() bool {
-	return hand[0].rank == hand[1].rank
+func (hand *Hand) IsPair() bool {
+	return (*hand)[0].rank == (*hand)[1].rank
 }
 
-func (hand Hand) HasSoftValue() bool {
+func (hand *Hand) HasSoftValue() bool {
 	score, _ := hand.Score()
 	return score.Soft != score.Hard
 }
