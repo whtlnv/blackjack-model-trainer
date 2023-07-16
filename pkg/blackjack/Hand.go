@@ -8,6 +8,10 @@ type HandScore struct {
 	Hard int
 }
 
+func (hand *Hand) Deal(card Card) {
+	*hand = append(*hand, card)
+}
+
 func (hand Hand) Values() []int {
 	var calculateSum func(cards []Card, index int, currentSum int) []int
 

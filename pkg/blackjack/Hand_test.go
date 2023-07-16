@@ -6,6 +6,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestDealingACard(t *testing.T) {
+	t.Run("Should deal a card to a hand", func(t *testing.T) {
+		hand := Hand{}
+		card := Card{Queen, Spades}
+
+		hand.Deal(card)
+
+		assert.Equal(t, 1, len(hand))
+		assert.Equal(t, card, hand[0])
+	})
+
+	t.Run("Should append a card to a hand", func(t *testing.T) {
+		hand := Hand{{King, Spades}}
+		card := Card{Queen, Spades}
+
+		hand.Deal(card)
+
+		assert.Equal(t, 2, len(hand))
+		assert.Equal(t, card, hand[1])
+	})
+}
+
 func TestHandValues(t *testing.T) {
 	t.Run("Should return the value of a hand", func(t *testing.T) {
 		hand := Hand{
