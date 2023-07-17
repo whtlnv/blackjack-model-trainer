@@ -72,7 +72,7 @@ func TestStrategyActionParsing(t *testing.T) {
 			desc:           "Should handle hard values",
 			playerHand:     Hand{NewCard(King, Clubs), NewCard(Five, Clubs)},
 			dealerHand:     Hand{NewCard(Two, Clubs)},
-			expectedAction: Stay,
+			expectedAction: Stand,
 		},
 		{
 			desc:           "Should handle soft values",
@@ -90,7 +90,7 @@ func TestStrategyActionParsing(t *testing.T) {
 			desc:           "Should handle pairs",
 			playerHand:     Hand{NewCard(Nine, Clubs), NewCard(Nine, Hearts)},
 			dealerHand:     Hand{NewCard(Seven, Clubs)},
-			expectedAction: Stay,
+			expectedAction: Stand,
 		},
 		{
 			desc:           "Should handle two aces",
@@ -121,7 +121,7 @@ func TestStrategyPlayMapping(t *testing.T) {
 		dealerHand := Hand{NewCard(Two, Clubs)}
 
 		got := strategy.Play(playerHand, dealerHand)
-		want := Stay
+		want := Stand
 		assert.Equal(t, want, got)
 	})
 
@@ -130,7 +130,7 @@ func TestStrategyPlayMapping(t *testing.T) {
 		dealerHand := Hand{NewCard(Two, Clubs)}
 
 		got := strategy.Play(playerHand, dealerHand)
-		want := Stay
+		want := Stand
 		assert.Equal(t, want, got)
 	})
 }

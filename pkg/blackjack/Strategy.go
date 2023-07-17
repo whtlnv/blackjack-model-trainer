@@ -67,7 +67,7 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	}
 
 	if action == "" {
-		action = Stay
+		action = Stand
 	}
 
 	return action

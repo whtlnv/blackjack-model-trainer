@@ -77,7 +77,7 @@ type PlayerAction string
 
 const (
 	Hit    PlayerAction = "H"
-	Stay   PlayerAction = "S"
+	Stand  PlayerAction = "S"
 	Double PlayerAction = "D"
 	Split  PlayerAction = "P"
 )
