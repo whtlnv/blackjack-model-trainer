@@ -56,14 +56,16 @@ func (strategy *Strategy) GetInitialBankroll() int {
 func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	dealerScore, _ := dealerHand.Score()
 	playerScore, _ := playerHand.Score()
+	dealerHighScore := DealerHand(dealerScore.Hard)
+	playerHighScore := PlayerHand(playerScore.Hard)
 
 	var action PlayerAction
 	if playerHand.IsPair() {
-		action = strategy.pairMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+		action = strategy.pairMap[playerHighScore][dealerHighScore]
 	} else if playerHand.HasSoftValue() {
-		action = strategy.softMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Soft)]
+		action = strategy.softMap[playerHighScore][dealerHighScore]
 	} else {
-		action = strategy.hardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+		action = strategy.hardMap[playerHighScore][dealerHighScore]
 	}
 
 	if action == "" {
