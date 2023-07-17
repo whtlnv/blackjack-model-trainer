@@ -4,8 +4,8 @@ import "github.com/samber/lo"
 
 type Hand []Card
 type HandScore struct {
-	Soft int
-	Hard int
+	Low  int
+	High int
 }
 
 func (hand *Hand) Deal(card Card) {
@@ -47,10 +47,10 @@ func (hand *Hand) Score() (score HandScore, isBusted bool) {
 	}
 
 	if len(notBusted) > 0 {
-		score = HandScore{Soft: lo.Min(notBusted), Hard: lo.Max(notBusted)}
+		score = HandScore{Low: lo.Min(notBusted), High: lo.Max(notBusted)}
 		isBusted = false
 	} else {
-		score = HandScore{Soft: lo.Min(values), Hard: lo.Max(values)}
+		score = HandScore{Low: lo.Min(values), High: lo.Max(values)}
 		isBusted = true
 	}
 
@@ -63,5 +63,5 @@ func (hand *Hand) IsPair() bool {
 
 func (hand *Hand) HasSoftValue() bool {
 	score, _ := hand.Score()
-	return score.Soft != score.Hard
+	return score.Low != score.High
 }

@@ -56,8 +56,8 @@ func (strategy *Strategy) GetInitialBankroll() int {
 func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	dealerScore, _ := dealerHand.Score()
 	playerScore, _ := playerHand.Score()
-	dealerHighScore := DealerHand(dealerScore.Hard)
-	playerHighScore := PlayerHand(playerScore.Hard)
+	dealerHighScore := DealerHand(dealerScore.High)
+	playerHighScore := PlayerHand(playerScore.High)
 
 	var action PlayerAction
 	if playerHand.IsPair() {
