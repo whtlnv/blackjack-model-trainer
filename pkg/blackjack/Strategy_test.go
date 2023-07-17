@@ -124,6 +124,15 @@ func TestStrategyPlayMapping(t *testing.T) {
 		want := Stay
 		assert.Equal(t, want, got)
 	})
+
+	t.Run("Should return Stand if mapping does not exist (Blackjack)", func(t *testing.T) {
+		playerHand := Hand{NewCard(King, Spades), NewCard(Ace, Hearts)}
+		dealerHand := Hand{NewCard(Two, Clubs)}
+
+		got := strategy.Play(playerHand, dealerHand)
+		want := Stay
+		assert.Equal(t, want, got)
+	})
 }
 
 func TestPlayerInitializationParsing(t *testing.T) {
