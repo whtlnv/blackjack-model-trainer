@@ -57,15 +57,20 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	dealerScore, _ := dealerHand.Score()
 	playerScore, _ := playerHand.Score()
 
+	var action PlayerAction
 	if playerHand.IsPair() {
-		return strategy.pairMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+		action = strategy.pairMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+	} else if playerHand.HasSoftValue() {
+		action = strategy.softMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Soft)]
+	} else {
+		action = strategy.hardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
 	}
 
-	if playerHand.HasSoftValue() {
-		return strategy.softMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Soft)]
+	if action == "" {
+		action = Stay
 	}
 
-	return strategy.hardMap[PlayerHand(playerScore.Hard)][DealerHand(dealerScore.Hard)]
+	return action
 }
 
 func (strategy *Strategy) Bet() int {

@@ -109,6 +109,23 @@ func TestStrategyActionParsing(t *testing.T) {
 	}
 }
 
+func TestStrategyPlayMapping(t *testing.T) {
+	raw, err := getTestStrategy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy, _ := NewStrategy(raw)
+
+	t.Run("Should return Stand if mapping does not exist (Bust)", func(t *testing.T) {
+		playerHand := Hand{NewCard(King, Spades), NewCard(King, Hearts), NewCard(King, Diamonds)}
+		dealerHand := Hand{NewCard(Two, Clubs)}
+
+		got := strategy.Play(playerHand, dealerHand)
+		want := Stay
+		assert.Equal(t, want, got)
+	})
+}
+
 func TestPlayerInitializationParsing(t *testing.T) {
 	raw, err := getTestStrategy()
 	if err != nil {
