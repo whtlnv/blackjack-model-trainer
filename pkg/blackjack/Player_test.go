@@ -10,6 +10,7 @@ import (
 
 type strategyMock struct {
 	initialBankroll int
+	alwaysHit       bool
 }
 
 func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
@@ -18,7 +19,11 @@ func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerActio
 		return Stand
 	}
 
-	return Hit
+	if strategy.alwaysHit {
+		return Hit
+	}
+
+	return Stand
 }
 
 func (strategy *strategyMock) Bet() int {
@@ -53,6 +58,7 @@ func TestPlayerInitialization(t *testing.T) {
 	t.Run("Should set player initial bankroll", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
+		strategy.alwaysHit = true
 		player := NewPlayer(strategy)
 
 		assert.Equal(t, strategy.initialBankroll, player.Bankroll)
@@ -62,6 +68,7 @@ func TestPlayerInitialization(t *testing.T) {
 func TestPlayerBet(t *testing.T) {
 	strategy := &strategyMock{}
 	strategy.initialBankroll = 100
+	strategy.alwaysHit = true
 
 	t.Run("Should decide to play a hand if has funds", func(t *testing.T) {
 		player := NewPlayer(strategy)
@@ -93,6 +100,7 @@ func TestPlayerPlay(t *testing.T) {
 	t.Run("Should return the number of cards dealt", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
+		strategy.alwaysHit = true
 		player := NewPlayer(strategy)
 
 		shoe := &shoeMock{}
