@@ -11,12 +11,19 @@ import (
 type strategyMock struct {
 	initialBankroll int
 	alwaysHit       bool
+	splitThenHit    bool
 }
 
 func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	_, playerIsBusted := playerHand.Score()
 	if playerIsBusted {
 		return Stand
+	}
+
+	if strategy.splitThenHit {
+		strategy.splitThenHit = false
+		strategy.alwaysHit = true
+		return Split
 	}
 
 	if strategy.alwaysHit {
@@ -48,6 +55,9 @@ func (shoe *shoeMock) Peek(count int) []Card {
 		NewCard(Three, Spades),
 		NewCard(Four, Clubs),
 		NewCard(Four, Hearts),
+		NewCard(Ten, Diamonds),
+		NewCard(King, Spades),
+		NewCard(Ace, Clubs),
 	}
 	return peek
 }
@@ -115,6 +125,26 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, dealerHand, shoe)
 
 		assert.Equal(t, 5, cardsTaken)
+	})
+
+	t.Run("Should split hands and play them", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		strategy.splitThenHit = true
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 8, cardsTaken)
 	})
 }
 

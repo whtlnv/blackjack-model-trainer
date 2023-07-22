@@ -46,23 +46,33 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 	//     blackjack hand
 
 	getAction := func(hand Hand, dealerHand Hand) PlayerAction {
+		if len(hand) < 2 {
+			return Hit
+		}
+
 		return player.strategy.Play(hand, dealerHand)
 	}
 
 	shoeIndex := 0
 	hands := []Hand{hand}
-	i := 0
 
-	for {
-		action := getAction(hands[i], dealerHand)
-		if action == Hit {
-			nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
-			hands[i].Deal(nextCard)
-			shoeIndex++
-		}
+	for i := 0; i < len(hands); i++ {
+		for {
+			action := getAction(hands[i], dealerHand)
 
-		if action == Stand {
-			break
+			if action == Split {
+				hands = []Hand{{hands[i][0]}, {hands[i][1]}}
+			}
+
+			if action == Hit {
+				nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
+				hands[i].Deal(nextCard)
+				shoeIndex++
+			}
+
+			if action == Stand {
+				break
+			}
 		}
 	}
 
