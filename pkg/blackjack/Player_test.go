@@ -13,6 +13,11 @@ type strategyMock struct {
 }
 
 func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
+	_, playerIsBusted := playerHand.Score()
+	if playerIsBusted {
+		return Stand
+	}
+
 	return Hit
 }
 
@@ -22,6 +27,24 @@ func (strategy *strategyMock) Bet() int {
 
 func (strategy *strategyMock) GetInitialBankroll() int {
 	return strategy.initialBankroll
+}
+
+type shoeMock struct{}
+
+func (shoe *shoeMock) Size() int {
+	return 52
+}
+
+func (shoe *shoeMock) Peek(count int) []Card {
+	peek := []Card{
+		NewCard(Three, Clubs),
+		NewCard(Three, Hearts),
+		NewCard(Three, Diamonds),
+		NewCard(Three, Spades),
+		NewCard(Four, Clubs),
+		NewCard(Four, Hearts),
+	}
+	return peek
 }
 
 // Tests
@@ -65,3 +88,26 @@ func TestPlayerBet(t *testing.T) {
 		assert.Equal(t, 9, player.Bankroll)
 	})
 }
+
+func TestPlayerPlay(t *testing.T) {
+	t.Run("Should return the number of cards dealt", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 5, cardsTaken)
+	})
+}
+
+// Test game resolution

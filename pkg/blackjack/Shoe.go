@@ -5,6 +5,11 @@ import (
 	"math/rand"
 )
 
+type Shoeish interface {
+	Size() int
+	Peek(count int) []Card
+}
+
 type Shoe struct {
 	decks  int
 	cards  []Card
