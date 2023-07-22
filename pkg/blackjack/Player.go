@@ -45,21 +45,26 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 	//   if blackjack
 	//     blackjack hand
 
+	getAction := func(hand Hand, dealerHand Hand) PlayerAction {
+		return player.strategy.Play(hand, dealerHand)
+	}
+
 	shoeIndex := 0
 	hands := []Hand{hand}
 	i := 0
 
 	for {
-		action := player.strategy.Play(hands[i], dealerHand)
-		switch action {
-		case Hit:
+		action := getAction(hands[i], dealerHand)
+		if action == Hit {
 			nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
 			hands[i].Deal(nextCard)
 			shoeIndex++
-		case Stand:
-			return shoeIndex
-		default:
-			panic("Action not implemented")
+		}
+
+		if action == Stand {
+			break
 		}
 	}
+
+	return shoeIndex
 }
