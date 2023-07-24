@@ -211,6 +211,7 @@ func TestIsBlackjack(t *testing.T) {
 			NewCard(Ace, Spades),
 			NewCard(King, Spades),
 		}
+		hand[1].SetHole()
 
 		got := hand.IsBlackjack()
 		want := true
@@ -228,5 +229,17 @@ func TestIsBlackjack(t *testing.T) {
 		want := false
 
 		assert.Equal(t, want, got)
+	})
+
+	t.Run("Input hand should no be modified", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
+		hand[1].SetHole()
+
+		hand.IsBlackjack()
+
+		assert.Equal(t, true, hand[1].hole)
 	})
 }

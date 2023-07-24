@@ -71,6 +71,10 @@ func (hand *Hand) IsBlackjack() bool {
 		return false
 	}
 
-	score, _ := hand.Score()
+	handCopy := &Hand{(*hand)[0], (*hand)[1]}
+	(*handCopy)[0].hole = false
+	(*handCopy)[1].hole = false
+
+	score, _ := handCopy.Score()
 	return score.High == 21
 }
