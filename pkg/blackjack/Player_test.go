@@ -130,13 +130,21 @@ func TestPlayerBet(t *testing.T) {
 }
 
 func TestPlayerPlay(t *testing.T) {
-	t.Run("Should return the number of cards dealt: regular", func(t *testing.T) {
+	initTest := func(bankroll int, alwaysHit bool, doubleThenHit bool, splitThenHit bool) (*Player, *shoeMock) {
 		strategy := &strategyMock{}
-		strategy.initialBankroll = 100
-		strategy.alwaysHit = true
-		player := NewPlayer(strategy)
+		strategy.initialBankroll = bankroll
+		strategy.alwaysHit = alwaysHit
+		strategy.doubleThenHit = doubleThenHit
+		strategy.splitThenHit = splitThenHit
 
+		player := NewPlayer(strategy)
 		shoe := &shoeMock{}
+
+		return player, shoe
+	}
+
+	t.Run("Should return the number of cards dealt: regular", func(t *testing.T) {
+		player, shoe := initTest(100, true, false, false)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -152,12 +160,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 100
-		strategy.splitThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(100, false, false, true)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -173,12 +176,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: double", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 100
-		strategy.doubleThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(100, false, true, false)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -194,12 +192,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 100
-		strategy.splitThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(100, false, false, true)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -215,12 +208,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not split if no funds are available", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 1
-		strategy.splitThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(1, false, false, true)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -237,12 +225,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 100
-		strategy.doubleThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(100, false, true, false)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -258,12 +241,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not double if no funds are available", func(t *testing.T) {
-		strategy := &strategyMock{}
-		strategy.initialBankroll = 1
-		strategy.doubleThenHit = true
-		player := NewPlayer(strategy)
-
-		shoe := &shoeMock{}
+		player, shoe := initTest(1, false, true, false)
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
