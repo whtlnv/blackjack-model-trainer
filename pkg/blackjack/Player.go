@@ -26,7 +26,7 @@ func (player *Player) Bet() (bool, int) {
 		return false, 0
 	}
 
-	player.Bankroll -= bet
+	player.subtractFromBankroll(bet)
 	player.Games = []*Game{NewGame(bet)}
 
 	return true, bet
@@ -50,8 +50,9 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 			action := getAction(game.hand, dealerHand)
 
 			if action == Split {
-				splitHand := game.Split()
-				player.Games = append(player.Games, splitHand)
+				splitGame := game.Split()
+				player.subtractFromBankroll(splitGame.bet)
+				player.Games = append(player.Games, splitGame)
 			}
 
 			if action == Hit {
@@ -67,4 +68,10 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 	}
 
 	return shoeIndex
+}
+
+// Private methods
+
+func (player *Player) subtractFromBankroll(bet int) {
+	player.Bankroll -= bet
 }

@@ -164,6 +164,31 @@ func TestPlayerPlay(t *testing.T) {
 
 		assert.Equal(t, 8, cardsTaken)
 	})
+
+	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		strategy.splitThenHit = true
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 98, player.Bankroll)
+	})
+
+	// t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
+
+	// })
 }
 
 // Test game resolution
