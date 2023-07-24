@@ -138,7 +138,7 @@ func TestHandScore(t *testing.T) {
 		assert.Equal(t, true, isBusted)
 	})
 
-	t.Run("Should return the correct scole for a hole card", func(t *testing.T) {
+	t.Run("Should return the correct score for a hole card", func(t *testing.T) {
 		hand := Hand{
 			NewCard(Ace, Spades),
 			NewCard(King, Clubs),
@@ -205,20 +205,28 @@ func TestHasSoftValue(t *testing.T) {
 	})
 }
 
-// This is for player
-// func TestHandSplit(t *testing.T) {
-// 	t.Run("Should split a hand", func(t *testing.T) {
-// 		hand := Hand{
-// 			NewCard(Queen, Spades),
-// 			NewCard(Queen, Spades),
-// 		}
+func TestIsBlackjack(t *testing.T) {
+	t.Run("Should return true if blackjack", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
 
-// 		got := hand.Split()
-// 		want := []Hand{
-// 			Hand{NewCard(Queen, Spades)},
-// 			Hand{NewCard(Queen, Spades)},
-// 		}
+		got := hand.IsBlackjack()
+		want := true
 
-// 		assert.Equal(t, want, got)
-// 	})
-// }
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return false if not blackjack", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Queen, Spades),
+			NewCard(King, Spades),
+		}
+
+		got := hand.IsBlackjack()
+		want := false
+
+		assert.Equal(t, want, got)
+	})
+}

@@ -65,3 +65,12 @@ func (hand *Hand) HasSoftValue() bool {
 	score, _ := hand.Score()
 	return score.Low != score.High
 }
+
+func (hand *Hand) IsBlackjack() bool {
+	if len(*hand) != 2 {
+		return false
+	}
+
+	score, _ := hand.Score()
+	return score.High == 21
+}
