@@ -4,6 +4,7 @@ type Game struct {
 	hand    Hand
 	bet     int
 	Doubled bool
+	IsSplit bool
 }
 
 // Factory
@@ -13,6 +14,7 @@ func NewGame(bet int) *Game {
 	game.bet = bet
 
 	game.Doubled = false
+	game.IsSplit = false
 
 	return game
 }
@@ -32,4 +34,18 @@ func (game *Game) Double(card Card) {
 	game.Hit(card)
 
 	game.Doubled = true
+}
+
+func (game *Game) Split() *Game {
+	keepCard := game.hand[0]
+	splitCard := game.hand[1]
+
+	game.hand = Hand{keepCard}
+	game.IsSplit = true
+
+	splitGame := NewGame(game.bet)
+	splitGame.SetHand(Hand{splitCard})
+	splitGame.IsSplit = true
+
+	return splitGame
 }

@@ -80,5 +80,72 @@ func TestGameDouble(t *testing.T) {
 
 		assert.Equal(t, want, got)
 	})
+}
 
+func TestGameSplit(t *testing.T) {
+	t.Run("Should remove a card from the split game hand", func(t *testing.T) {
+		game := NewGame(1)
+		hand := Hand{NewCard(Two, Spades), NewCard(Two, Hearts)}
+		game.SetHand(hand)
+
+		game.Split()
+
+		want := Hand{NewCard(Two, Spades)}
+		got := game.hand
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should flag a hand that was split", func(t *testing.T) {
+		game := NewGame(1)
+		hand := Hand{NewCard(Two, Spades), NewCard(Two, Hearts)}
+		game.SetHand(hand)
+
+		game.Split()
+
+		want := true
+		got := game.IsSplit
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return a game with the split card", func(t *testing.T) {
+		game := NewGame(1)
+		hand := Hand{NewCard(Two, Spades), NewCard(Two, Hearts)}
+		game.SetHand(hand)
+
+		splitGame := game.Split()
+
+		want := Hand{NewCard(Two, Hearts)}
+		got := splitGame.hand
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return a game with the same bet", func(t *testing.T) {
+		bet := 1
+		game := NewGame(bet)
+		hand := Hand{NewCard(Two, Spades), NewCard(Two, Hearts)}
+		game.SetHand(hand)
+
+		splitGame := game.Split()
+
+		want := bet
+		got := splitGame.bet
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return a game flagged as split", func(t *testing.T) {
+		game := NewGame(1)
+		hand := Hand{NewCard(Two, Spades), NewCard(Two, Hearts)}
+		game.SetHand(hand)
+
+		splitGame := game.Split()
+
+		want := true
+		got := splitGame.IsSplit
+
+		assert.Equal(t, want, got)
+	})
 }
