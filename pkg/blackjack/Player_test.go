@@ -256,6 +256,22 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 0, player.Bankroll)
 		assert.Equal(t, 1, player.Games[0].bet)
 	})
+
+	t.Run("No cards should be dealt if dealer has BJ (Ace up)", func(t *testing.T) {
+		player, shoe := initTest(100, true, false, false)
+
+		player.Bet()
+		dealerUpcard := NewCard(Ace, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 0, cardsTaken)
+	})
 }
 
 // Test game resolution

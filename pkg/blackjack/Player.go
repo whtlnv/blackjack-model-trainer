@@ -61,6 +61,11 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 		return Stand
 	}
 
+	// dealer has a blackjack, we lose
+	if dealerHand.IsBlackjack() {
+		return Stand
+	}
+
 	idealAction := player.strategy.Play(game.hand, dealerHand)
 
 	// if the ideal action is to double/split, but we can't afford it, hit instead
