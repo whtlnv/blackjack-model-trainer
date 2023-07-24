@@ -166,6 +166,20 @@ func TestGameResolution(t *testing.T) {
 			expectedValue: 20,
 		},
 		{
+			desc:          "Player bust -> 0",
+			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades), NewCard(Two, Clubs)},
+			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs), NewCard(Queen, Hearts)},
+			inputBet:      10,
+			expectedValue: 0,
+		},
+		{
+			desc:          "Dealer bust -> return bet + winnings",
+			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades)},
+			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs), NewCard(Three, Hearts)},
+			inputBet:      10,
+			expectedValue: 20,
+		},
+		{
 			desc:          "Player lose -> 0",
 			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Five, Spades)},
 			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Two, Clubs), NewCard(Five, Hearts)},
