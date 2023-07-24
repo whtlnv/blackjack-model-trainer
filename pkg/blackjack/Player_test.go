@@ -107,7 +107,7 @@ func TestPlayerBet(t *testing.T) {
 }
 
 func TestPlayerPlay(t *testing.T) {
-	t.Run("Should return the number of cards dealt", func(t *testing.T) {
+	t.Run("Should return the number of cards dealt: regular", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
 		strategy.alwaysHit = true
@@ -115,6 +115,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		shoe := &shoeMock{}
 
+		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
 		dealerHoleCard := NewCard(Ten, Hearts)
 		dealerHoleCard.SetHole()
@@ -127,7 +128,7 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 5, cardsTaken)
 	})
 
-	t.Run("Should split hands and play them", func(t *testing.T) {
+	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
 		strategy.splitThenHit = true
@@ -135,6 +136,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		shoe := &shoeMock{}
 
+		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
 		dealerHoleCard := NewCard(Ten, Hearts)
 		dealerHoleCard.SetHole()

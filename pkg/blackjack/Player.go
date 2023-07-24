@@ -3,6 +3,7 @@ package blackjack
 type Player struct {
 	strategy Strategyish
 	Bankroll int
+	Games    []*Game
 }
 
 // Factory
@@ -11,6 +12,8 @@ func NewPlayer(strategy Strategyish) *Player {
 	player := &Player{}
 	player.strategy = strategy
 	player.Bankroll = strategy.GetInitialBankroll()
+
+	player.Games = []*Game{}
 
 	return player
 }
@@ -24,27 +27,12 @@ func (player *Player) Bet() (bool, int) {
 	}
 
 	player.Bankroll -= bet
+	player.Games = []*Game{NewGame(bet)}
 
 	return true, bet
 }
 
 func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
-	// store active game
-	// for each hand
-	//   get action
-	//	 if split
-	//     split hand
-	//   if double
-	//     double hand
-	//   if hit
-	//     hit hand
-	//   if stay
-	//     stay hand
-	//   if bust
-	//     bust hand
-	//   if blackjack
-	//     blackjack hand
-
 	getAction := func(hand Hand, dealerHand Hand) PlayerAction {
 		if len(hand) < 2 {
 			return Hit
@@ -54,19 +42,21 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 	}
 
 	shoeIndex := 0
-	hands := []Hand{hand}
+	player.Games[0].SetHand(hand)
 
-	for i := 0; i < len(hands); i++ {
+	for i := 0; i < len(player.Games); i++ {
 		for {
-			action := getAction(hands[i], dealerHand)
+			game := player.Games[i]
+			action := getAction(game.hand, dealerHand)
 
 			if action == Split {
-				hands = []Hand{{hands[i][0]}, {hands[i][1]}}
+				splitHand := game.Split()
+				player.Games = append(player.Games, splitHand)
 			}
 
 			if action == Hit {
 				nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
-				hands[i].Deal(nextCard)
+				game.Hit(nextCard)
 				shoeIndex++
 			}
 
