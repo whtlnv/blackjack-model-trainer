@@ -62,7 +62,7 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 	}
 
 	// dealer has a blackjack, we lose
-	if dealerHand.IsBlackjack() {
+	if dealerHand.IsBlackjack() && dealerHand.GetHoleCard().rank != Ace {
 		return Stand
 	}
 
