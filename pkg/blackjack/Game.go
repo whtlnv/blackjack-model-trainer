@@ -49,3 +49,18 @@ func (game *Game) Split() *Game {
 
 	return splitGame
 }
+
+func (game *Game) Resolve(dealerHand *Hand) int {
+	dealerScore, _ := dealerHand.Score()
+	playerScore, _ := game.hand.Score()
+
+	if playerScore.High > dealerScore.High {
+		return game.bet * 2
+	}
+
+	if playerScore.High == dealerScore.High {
+		return game.bet
+	}
+
+	return 0
+}

@@ -149,3 +149,47 @@ func TestGameSplit(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestGameResolution(t *testing.T) {
+	testCases := []struct {
+		desc          string
+		playerHand    *Hand
+		dealerHand    *Hand
+		inputBet      int
+		expectedValue int
+	}{
+		{
+			desc:          "Player win -> return bet + winnings",
+			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades)},
+			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs)},
+			inputBet:      10,
+			expectedValue: 20,
+		},
+		{
+			desc:          "Player lose -> 0",
+			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Five, Spades)},
+			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Two, Clubs), NewCard(Five, Hearts)},
+			inputBet:      10,
+			expectedValue: 0,
+		},
+		{
+			desc:          "Player and dealer push",
+			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Two, Spades), NewCard(Four, Clubs)},
+			dealerHand:    &Hand{NewCard(Seven, Hearts), NewCard(Ten, Clubs)},
+			inputBet:      10,
+			expectedValue: 10,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.desc, func(t *testing.T) {
+			game := NewGame(testCase.inputBet)
+			game.SetHand(*testCase.playerHand)
+
+			want := testCase.expectedValue
+			got := game.Resolve(testCase.dealerHand)
+
+			assert.Equal(t, want, got)
+		})
+	}
+}
