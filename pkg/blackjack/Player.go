@@ -51,12 +51,25 @@ func (player *Player) subtractFromBankroll(bet int) {
 }
 
 func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
-	// handle split hand with only 1 card
+	// a split game with 1 card should always hit
 	if len(game.hand) < 2 {
 		return Hit
 	}
 
-	return player.strategy.Play(game.hand, dealerHand)
+	// a doubled game with 3 cards should always stand
+	if game.IsDoubled && len(game.hand) > 2 {
+		return Stand
+	}
+
+	idealAction := player.strategy.Play(game.hand, dealerHand)
+
+	// if the ideal action is to double/split, but we can't afford it, hit instead
+	requiresBet := idealAction == Double || idealAction == Split
+	if requiresBet && player.Bankroll < game.bet {
+		return Hit
+	}
+
+	return idealAction
 }
 
 func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) int {

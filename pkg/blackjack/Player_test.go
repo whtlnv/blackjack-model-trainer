@@ -172,6 +172,27 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 8, cardsTaken)
 	})
 
+	t.Run("Should return the number of cards dealt: double", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		strategy.doubleThenHit = true
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 1, cardsTaken)
+	})
+
 	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
@@ -193,6 +214,28 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 98, player.Bankroll)
 	})
 
+	t.Run("Should not split if no funds are available", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 1
+		strategy.splitThenHit = true
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 0, player.Bankroll)
+		assert.Equal(t, 1, len(player.Games))
+	})
+
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
@@ -212,6 +255,28 @@ func TestPlayerPlay(t *testing.T) {
 		player.Play(playerHand, dealerHand, shoe)
 
 		assert.Equal(t, 98, player.Bankroll)
+	})
+
+	t.Run("Should not double if no funds are available", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 1
+		strategy.doubleThenHit = true
+		player := NewPlayer(strategy)
+
+		shoe := &shoeMock{}
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 0, player.Bankroll)
+		assert.Equal(t, 1, player.Games[0].bet)
 	})
 }
 
