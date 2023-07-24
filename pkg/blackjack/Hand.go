@@ -78,3 +78,13 @@ func (hand *Hand) IsBlackjack() bool {
 	score, _ := handCopy.Score()
 	return score.High == 21
 }
+
+func (hand *Hand) GetHoleCard() *Card {
+	for _, card := range *hand {
+		if card.hole {
+			return &card
+		}
+	}
+
+	return &Card{}
+}

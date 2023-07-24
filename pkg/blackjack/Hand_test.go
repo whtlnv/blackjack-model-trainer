@@ -243,3 +243,30 @@ func TestIsBlackjack(t *testing.T) {
 		assert.Equal(t, true, hand[1].hole)
 	})
 }
+
+func TestGetHoleCard(t *testing.T) {
+	t.Run("Should return the hole card", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
+		hand[1].SetHole()
+
+		got := hand.GetHoleCard()
+		want := &hand[1]
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return nil if no hole card", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
+
+		got := hand.GetHoleCard()
+		want := &Card{}
+
+		assert.Equal(t, want, got)
+	})
+}
