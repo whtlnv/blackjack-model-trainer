@@ -76,7 +76,7 @@ func TestGameDouble(t *testing.T) {
 		game.Double(NewCard(Four, Spades))
 
 		want := true
-		got := game.Doubled
+		got := game.IsDoubled
 
 		assert.Equal(t, want, got)
 	})

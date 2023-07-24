@@ -1,10 +1,10 @@
 package blackjack
 
 type Game struct {
-	hand    Hand
-	bet     int
-	Doubled bool
-	IsSplit bool
+	hand      Hand
+	bet       int
+	IsDoubled bool
+	IsSplit   bool
 }
 
 // Factory
@@ -13,7 +13,7 @@ func NewGame(bet int) *Game {
 	game := &Game{}
 	game.bet = bet
 
-	game.Doubled = false
+	game.IsDoubled = false
 	game.IsSplit = false
 
 	return game
@@ -33,7 +33,7 @@ func (game *Game) Double(card Card) {
 	game.bet *= 2
 	game.Hit(card)
 
-	game.Doubled = true
+	game.IsDoubled = true
 }
 
 func (game *Game) Split() *Game {
