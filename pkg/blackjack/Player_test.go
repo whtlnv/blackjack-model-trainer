@@ -11,6 +11,7 @@ import (
 type strategyMock struct {
 	initialBankroll int
 	alwaysHit       bool
+	doubleThenHit   bool
 	splitThenHit    bool
 }
 
@@ -24,6 +25,12 @@ func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerActio
 		strategy.splitThenHit = false
 		strategy.alwaysHit = true
 		return Split
+	}
+
+	if strategy.doubleThenHit {
+		strategy.doubleThenHit = false
+		strategy.alwaysHit = true
+		return Double
 	}
 
 	if strategy.alwaysHit {
@@ -186,9 +193,26 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 98, player.Bankroll)
 	})
 
-	// t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
+	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		strategy.doubleThenHit = true
+		player := NewPlayer(strategy)
 
-	// })
+		shoe := &shoeMock{}
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 98, player.Bankroll)
+	})
 }
 
 // Test game resolution

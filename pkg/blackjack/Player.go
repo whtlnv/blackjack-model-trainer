@@ -48,6 +48,7 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 		for {
 			game := player.Games[i]
 			action := getAction(game.hand, dealerHand)
+			nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
 
 			if action == Split {
 				splitGame := game.Split()
@@ -55,8 +56,13 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 				player.Games = append(player.Games, splitGame)
 			}
 
+			if action == Double {
+				player.subtractFromBankroll(game.bet)
+				game.Double(nextCard)
+				shoeIndex++
+			}
+
 			if action == Hit {
-				nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
 				game.Hit(nextCard)
 				shoeIndex++
 			}
