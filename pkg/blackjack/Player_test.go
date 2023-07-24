@@ -104,6 +104,22 @@ func TestPlayerBet(t *testing.T) {
 		assert.True(t, willBet)
 		assert.Equal(t, 9, player.Bankroll)
 	})
+
+	t.Run("Should create a new game", func(t *testing.T) {
+		player := NewPlayer(strategy)
+		player.Bankroll = 10
+
+		player.Bet( /* shoe? */ )
+		assert.Equal(t, 1, len(player.Games))
+	})
+
+	t.Run("Should create a new game with the bet ammount", func(t *testing.T) {
+		player := NewPlayer(strategy)
+		player.Bankroll = 10
+
+		player.Bet( /* shoe? */ )
+		assert.Equal(t, 1, player.Games[0].bet)
+	})
 }
 
 func TestPlayerPlay(t *testing.T) {
