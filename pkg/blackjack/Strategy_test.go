@@ -101,7 +101,7 @@ func TestStrategyActionParsing(t *testing.T) {
 		{
 			desc:           "Should handle two aces",
 			playerHand:     Hand{NewCard(Ace, Spades), NewCard(Ace, Hearts)},
-			dealerHand:     Hand{NewCard(Two, Clubs)},
+			dealerHand:     Hand{NewCard(Ten, Clubs)},
 			expectedAction: Split,
 		},
 	}

@@ -58,10 +58,11 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	playerScore, _ := playerHand.Score()
 	dealerHighScore := DealerHand(dealerScore.High)
 	playerHighScore := PlayerHand(playerScore.High)
+	playerLowScore := PlayerHand(playerScore.Low)
 
 	var action PlayerAction
 	if playerHand.IsPair() {
-		action = strategy.pairMap[playerHighScore][dealerHighScore]
+		action = strategy.pairMap[playerLowScore][dealerHighScore]
 	} else if playerHand.HasSoftValue() {
 		action = strategy.softMap[playerHighScore][dealerHighScore]
 	} else {

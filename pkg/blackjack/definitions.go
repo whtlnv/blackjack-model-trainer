@@ -65,7 +65,7 @@ const (
 	PairFours  PlayerHand = 8
 	PairThrees PlayerHand = 6
 	PairTwos   PlayerHand = 4
-	PairAces   PlayerHand = 11
+	PairAces   PlayerHand = 2
 )
 
 const PlayerPairHandCount = 10
