@@ -24,7 +24,7 @@ func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerActio
 	if strategy.splitThenHit {
 		strategy.splitThenHit = false
 		strategy.alwaysHit = true
-		return Split
+		return SplitOrHit
 	}
 
 	if strategy.doubleThenHit {

@@ -79,7 +79,7 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 	idealAction := player.strategy.Play(game.hand, dealerHand)
 
 	// if the ideal action is to double/split, but we can't afford it, hit instead
-	requiresBet := idealAction == Double || idealAction == Split
+	requiresBet := idealAction == Double || idealAction == SplitOrHit
 	if requiresBet && player.Bankroll < float64(game.bet) {
 		return Hit
 	}
@@ -92,7 +92,7 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 		action := player.getAction(game, dealerHand)
 		nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
 
-		if action == Split {
+		if action == SplitOrHit {
 			splitGame := game.Split()
 			player.subtractFromBankroll(splitGame.bet)
 			player.Games = append(player.Games, splitGame)

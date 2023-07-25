@@ -76,10 +76,10 @@ const HandCount = PlayerHandCount * DealerHandCount
 type PlayerAction string
 
 const (
-	Hit    PlayerAction = "H"
-	Stand  PlayerAction = "S"
-	Double PlayerAction = "D"
-	Split  PlayerAction = "P"
+	Hit        PlayerAction = "H"
+	Stand      PlayerAction = "S"
+	Double     PlayerAction = "D"
+	SplitOrHit PlayerAction = "P"
 )
 
 const bankrollLength = 4
