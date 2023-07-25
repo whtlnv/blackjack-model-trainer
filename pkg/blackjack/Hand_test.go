@@ -270,3 +270,29 @@ func TestGetHoleCard(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestReveal(t *testing.T) {
+	t.Run("Should reveal the hole card", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
+		hand[1].SetHole()
+
+		hand.Reveal()
+
+		assert.Equal(t, false, hand[1].hole)
+	})
+
+	t.Run("Should not reveal if no hole card", func(t *testing.T) {
+		hand := Hand{
+			NewCard(Ace, Spades),
+			NewCard(King, Spades),
+		}
+
+		hand.Reveal()
+
+		assert.Equal(t, false, hand[0].hole)
+		assert.Equal(t, false, hand[1].hole)
+	})
+}

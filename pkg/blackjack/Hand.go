@@ -88,3 +88,9 @@ func (hand *Hand) GetHoleCard() *Card {
 
 	return &Card{}
 }
+
+func (hand *Hand) Reveal() {
+	for i := range *hand {
+		(*hand)[i].hole = false
+	}
+}
