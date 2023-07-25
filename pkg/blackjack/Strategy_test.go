@@ -150,7 +150,7 @@ func TestPlayerInitializationParsing(t *testing.T) {
 
 	t.Run("Should parse initial bankroll", func(t *testing.T) {
 		got := strategy.GetInitialBankroll()
-		want := 1000
+		want := 1000.0
 		assert.Equal(t, want, got)
 	})
 }

@@ -8,7 +8,7 @@ import (
 type Strategyish interface {
 	Play(playerHand Hand, dealerHand Hand) PlayerAction
 	Bet() int
-	GetInitialBankroll() int
+	GetInitialBankroll() float64
 }
 
 type Strategy struct {
@@ -49,8 +49,8 @@ func NewStrategy(raw []byte) (*Strategy, error) {
 
 // Public methods
 
-func (strategy *Strategy) GetInitialBankroll() int {
-	return strategy.initialBankroll
+func (strategy *Strategy) GetInitialBankroll() float64 {
+	return float64(strategy.initialBankroll)
 }
 
 func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {

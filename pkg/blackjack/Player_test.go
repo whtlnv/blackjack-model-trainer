@@ -44,8 +44,8 @@ func (strategy *strategyMock) Bet() int {
 	return 1
 }
 
-func (strategy *strategyMock) GetInitialBankroll() int {
-	return strategy.initialBankroll
+func (strategy *strategyMock) GetInitialBankroll() float64 {
+	return float64(strategy.initialBankroll)
 }
 
 type shoeMock struct{}
@@ -78,7 +78,7 @@ func TestPlayerInitialization(t *testing.T) {
 		strategy.alwaysHit = true
 		player := NewPlayer(strategy)
 
-		assert.Equal(t, strategy.initialBankroll, player.Bankroll)
+		assert.Equal(t, float64(strategy.initialBankroll), player.Bankroll)
 	})
 }
 
@@ -109,7 +109,7 @@ func TestPlayerBet(t *testing.T) {
 
 		willBet, _ := player.Bet( /* shoe? */ )
 		assert.True(t, willBet)
-		assert.Equal(t, 9, player.Bankroll)
+		assert.Equal(t, 9.0, player.Bankroll)
 	})
 
 	t.Run("Should create a new game", func(t *testing.T) {
@@ -204,7 +204,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player.Play(playerHand, dealerHand, shoe)
 
-		assert.Equal(t, 98, player.Bankroll)
+		assert.Equal(t, 98.0, player.Bankroll)
 	})
 
 	t.Run("Should not split if no funds are available", func(t *testing.T) {
@@ -220,7 +220,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player.Play(playerHand, dealerHand, shoe)
 
-		assert.Equal(t, 0, player.Bankroll)
+		assert.Equal(t, 0.0, player.Bankroll)
 		assert.Equal(t, 1, len(player.Games))
 	})
 
@@ -237,7 +237,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player.Play(playerHand, dealerHand, shoe)
 
-		assert.Equal(t, 98, player.Bankroll)
+		assert.Equal(t, 98.0, player.Bankroll)
 	})
 
 	t.Run("Should not double if no funds are available", func(t *testing.T) {
@@ -253,7 +253,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player.Play(playerHand, dealerHand, shoe)
 
-		assert.Equal(t, 0, player.Bankroll)
+		assert.Equal(t, 0.0, player.Bankroll)
 		assert.Equal(t, 1, player.Games[0].bet)
 	})
 
@@ -322,7 +322,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 0, cardsTaken)
-		assert.Equal(t, 1001, player.Bankroll)
+		assert.Equal(t, 1001.0, player.Bankroll)
 	})
 
 	t.Run("Should reflect player loss after game", func(t *testing.T) {
@@ -342,7 +342,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, cardsTaken)
-		assert.Equal(t, 999, player.Bankroll)
+		assert.Equal(t, 999.0, player.Bankroll)
 	})
 
 	t.Run("Should credit winnings after spliting and winning one game", func(t *testing.T) {
@@ -362,7 +362,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 2, len(player.Games))
-		assert.Equal(t, 1000, player.Bankroll)
+		assert.Equal(t, 1000.0, player.Bankroll)
 	})
 
 	t.Run("Should credit winnings after spliting", func(t *testing.T) {
@@ -382,7 +382,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 2, len(player.Games))
-		assert.Equal(t, 1002, player.Bankroll)
+		assert.Equal(t, 1002.0, player.Bankroll)
 	})
 
 	t.Run("Should credit winnings after spliting and losing", func(t *testing.T) {
@@ -402,7 +402,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 2, len(player.Games))
-		assert.Equal(t, 998, player.Bankroll)
+		assert.Equal(t, 998.0, player.Bankroll)
 	})
 
 	t.Run("Should credit winnings to player after doubling", func(t *testing.T) {
@@ -423,7 +423,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, cardsTaken)
-		assert.Equal(t, 1002, player.Bankroll)
+		assert.Equal(t, 1002.0, player.Bankroll)
 	})
 
 	t.Run("Should reflect loss after doubling", func(t *testing.T) {
@@ -443,7 +443,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, cardsTaken)
-		assert.Equal(t, 998, player.Bankroll)
+		assert.Equal(t, 998.0, player.Bankroll)
 	})
 
 	t.Run("Should credit initial bet when pushing", func(t *testing.T) {
@@ -463,6 +463,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 0, cardsTaken)
-		assert.Equal(t, 1000, player.Bankroll)
+		assert.Equal(t, 1000.0, player.Bankroll)
 	})
 }

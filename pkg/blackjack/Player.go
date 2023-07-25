@@ -2,7 +2,7 @@ package blackjack
 
 type Player struct {
 	strategy Strategyish
-	Bankroll int
+	Bankroll float64
 	Games    []*Game
 }
 
@@ -22,7 +22,7 @@ func NewPlayer(strategy Strategyish) *Player {
 
 func (player *Player) Bet() (bool, int) {
 	bet := player.strategy.Bet()
-	if bet > player.Bankroll {
+	if float64(bet) > player.Bankroll {
 		return false, 0
 	}
 
@@ -45,7 +45,7 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 }
 
 func (player *Player) Resolve(dealerHand Hand) {
-	winnings := 0
+	winnings := 0.0
 
 	for _, game := range player.Games {
 		winnings += game.Resolve(&dealerHand)
@@ -57,7 +57,7 @@ func (player *Player) Resolve(dealerHand Hand) {
 // Private methods
 
 func (player *Player) subtractFromBankroll(bet int) {
-	player.Bankroll -= bet
+	player.Bankroll -= float64(bet)
 }
 
 func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
@@ -80,7 +80,7 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 
 	// if the ideal action is to double/split, but we can't afford it, hit instead
 	requiresBet := idealAction == Double || idealAction == Split
-	if requiresBet && player.Bankroll < game.bet {
+	if requiresBet && player.Bankroll < float64(game.bet) {
 		return Hit
 	}
 

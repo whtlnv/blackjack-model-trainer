@@ -156,42 +156,42 @@ func TestGameResolution(t *testing.T) {
 		playerHand    *Hand
 		dealerHand    *Hand
 		inputBet      int
-		expectedValue int
+		expectedValue float64
 	}{
 		{
 			desc:          "Player win -> return bet + winnings",
 			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades)},
 			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs)},
 			inputBet:      10,
-			expectedValue: 20,
+			expectedValue: 20.0,
 		},
 		{
 			desc:          "Player bust -> 0",
 			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades), NewCard(Two, Clubs)},
 			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs), NewCard(Queen, Hearts)},
 			inputBet:      10,
-			expectedValue: 0,
+			expectedValue: 0.0,
 		},
 		{
 			desc:          "Dealer bust -> return bet + winnings",
 			playerHand:    &Hand{NewCard(King, Diamonds), NewCard(Queen, Spades)},
 			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Nine, Clubs), NewCard(Three, Hearts)},
 			inputBet:      10,
-			expectedValue: 20,
+			expectedValue: 20.0,
 		},
 		{
 			desc:          "Player lose -> 0",
 			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Five, Spades)},
 			dealerHand:    &Hand{NewCard(Jack, Hearts), NewCard(Two, Clubs), NewCard(Five, Hearts)},
 			inputBet:      10,
-			expectedValue: 0,
+			expectedValue: 0.0,
 		},
 		{
 			desc:          "Player and dealer push",
 			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Two, Spades), NewCard(Four, Clubs)},
 			dealerHand:    &Hand{NewCard(Seven, Hearts), NewCard(Ten, Clubs)},
 			inputBet:      10,
-			expectedValue: 10,
+			expectedValue: 10.0,
 		},
 	}
 

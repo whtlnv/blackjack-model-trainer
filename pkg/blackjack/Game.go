@@ -50,9 +50,10 @@ func (game *Game) Split() *Game {
 	return splitGame
 }
 
-func (game *Game) Resolve(dealerHand *Hand) int {
+func (game *Game) Resolve(dealerHand *Hand) float64 {
 	dealerScore, _ := dealerHand.Score()
 	playerScore, _ := game.hand.Score()
+	castedBet := float64(game.bet)
 
 	// player busted, you lose
 	if playerScore.Low > 21 {
@@ -66,17 +67,17 @@ func (game *Game) Resolve(dealerHand *Hand) int {
 
 	// dealer busted, you win
 	if dealerScore.Low > 21 {
-		return game.bet * 2
+		return castedBet * 2
 	}
 
 	// better hand, you win
 	if playerScore.High > dealerScore.High {
-		return game.bet * 2
+		return castedBet * 2
 	}
 
 	// same value, you push
 	if playerScore.High == dealerScore.High {
-		return game.bet
+		return castedBet
 	}
 
 	return 0
