@@ -61,9 +61,9 @@ func (game *Game) Resolve(dealerHand *Hand) float64 {
 	}
 
 	// blackjack, you win
-	// if playerScore.High == 21 && len(game.hand) == 2 {
-	// 	return game.bet * 2.5
-	// }
+	if playerScore.High == 21 && len(game.hand) == 2 {
+		return castedBet * 2.5
+	}
 
 	// dealer busted, you win
 	if dealerScore.Low > 21 {

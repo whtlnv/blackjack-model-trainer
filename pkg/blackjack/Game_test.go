@@ -193,6 +193,13 @@ func TestGameResolution(t *testing.T) {
 			inputBet:      10,
 			expectedValue: 10.0,
 		},
+		{
+			desc:          "Player blackjack -> return bet + winnings",
+			playerHand:    &Hand{NewCard(Ace, Diamonds), NewCard(Ten, Spades)},
+			dealerHand:    &Hand{NewCard(Seven, Hearts), NewCard(Ten, Clubs)},
+			inputBet:      1,
+			expectedValue: 2.5,
+		},
 	}
 
 	for _, testCase := range testCases {
