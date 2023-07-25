@@ -44,6 +44,16 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 	return shoeIndex
 }
 
+func (player *Player) Resolve(dealerHand Hand) {
+	winnings := 0
+
+	for _, game := range player.Games {
+		winnings += game.Resolve(&dealerHand)
+	}
+
+	player.Bankroll += winnings
+}
+
 // Private methods
 
 func (player *Player) subtractFromBankroll(bet int) {

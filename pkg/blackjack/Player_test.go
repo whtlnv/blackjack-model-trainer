@@ -290,4 +290,179 @@ func TestPlayerPlay(t *testing.T) {
 	})
 }
 
-// Test game resolution
+func TestPlayerBankrollAfterPlay(t *testing.T) {
+	initTest := func() (*Player, *shoeMock) {
+		// TODO: refactor getTestStrategy into its own file
+		raw, err := getTestStrategy()
+		if err != nil {
+			t.Fatal(err)
+		}
+		strategy, _ := NewStrategy(raw)
+
+		player := NewPlayer(strategy)
+		shoe := &shoeMock{}
+
+		return player, shoe
+	}
+
+	t.Run("Should credit winnings to player bankroll", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(King, Clubs), NewCard(Queen, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 0, cardsTaken)
+		assert.Equal(t, 1001, player.Bankroll)
+	})
+
+	t.Run("Should reflect player loss after game", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(King, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Five, Clubs), NewCard(Ace, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, cardsTaken)
+		assert.Equal(t, 999, player.Bankroll)
+	})
+
+	t.Run("Should credit winnings after spliting and winning one game", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Seven, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 2, len(player.Games))
+		assert.Equal(t, 1000, player.Bankroll)
+	})
+
+	t.Run("Should credit winnings after spliting", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Seven, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 2, len(player.Games))
+		assert.Equal(t, 1002, player.Bankroll)
+	})
+
+	t.Run("Should credit winnings after spliting and losing", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Ace, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 2, len(player.Games))
+		assert.Equal(t, 998, player.Bankroll)
+	})
+
+	t.Run("Should credit winnings to player after doubling", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Five, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Six, Clubs), NewCard(Five, Diamonds)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand = Hand{dealerUpcard, dealerHoleCard, NewCard(King, Clubs)}
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, cardsTaken)
+		assert.Equal(t, 1002, player.Bankroll)
+	})
+
+	t.Run("Should reflect loss after doubling", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Queen, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Six, Clubs), NewCard(Five, Diamonds)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, cardsTaken)
+		assert.Equal(t, 998, player.Bankroll)
+	})
+
+	t.Run("Should credit initial bet when pushing", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(King, Clubs), NewCard(Nine, Hearts)}
+
+		cardsTaken := player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 0, cardsTaken)
+		assert.Equal(t, 1000, player.Bankroll)
+	})
+}
