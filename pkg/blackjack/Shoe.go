@@ -11,9 +11,11 @@ type Shoeish interface {
 }
 
 type Shoe struct {
-	decks  int
-	cards  []Card
-	cursor int
+	decks            int
+	cards            []Card
+	cursor           int
+	penetrationIndex int
+	NeedsReshuffle   bool
 }
 
 type CursorOutOfBoundsError struct {
@@ -34,7 +36,13 @@ func (e *CursorOutOfBoundsError) Error() string {
 // Factory
 
 func NewShoe(decks int) *Shoe {
-	shoe := &Shoe{decks, []Card{}, 0}
+	shoe := &Shoe{
+		decks:            decks,
+		cards:            []Card{},
+		cursor:           0,
+		penetrationIndex: decks * 52,
+		NeedsReshuffle:   false,
+	}
 
 	shoe.build()
 	shoe.shuffle()
@@ -64,7 +72,16 @@ func (shoe *Shoe) AdvanceCursor(offset int) (int, error) {
 	}
 
 	shoe.cursor = advanceTo
+
+	if shoe.cursor >= shoe.penetrationIndex {
+		shoe.NeedsReshuffle = true
+	}
+
 	return shoe.cursor, nil
+}
+
+func (shoe *Shoe) SetPenetration(deckPercentage float64) {
+	shoe.penetrationIndex = int(float64(shoe.Size()) * deckPercentage)
 }
 
 // Private methods
@@ -97,4 +114,6 @@ func (shoe *Shoe) shuffle() {
 		j := rand.Intn(shoe.Size() - 1)
 		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
 	}
+
+	shoe.NeedsReshuffle = false
 }
