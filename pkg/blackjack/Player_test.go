@@ -75,6 +75,10 @@ func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) {
 
 func (shoe *shoeMock) SetPenetration(deckPercentage float64) {}
 
+func (shoe *shoeMock) NeedsReshuffle() bool {
+	return false
+}
+
 // Tests
 
 func TestPlayerInitialization(t *testing.T) {

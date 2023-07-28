@@ -85,19 +85,19 @@ func TestPenetration(t *testing.T) {
 		shoe := NewShoe(deckCount)
 		shoe.SetPenetration(.5)
 		shoe.AdvanceCursor(25)
-		assert.False(t, shoe.needsReshuffle)
+		assert.False(t, shoe.NeedsReshuffle())
 
 		shoe.AdvanceCursor(1)
-		assert.True(t, shoe.needsReshuffle)
+		assert.True(t, shoe.NeedsReshuffle())
 	})
 
 	t.Run("Should reset reshuffle flag when shoe is reshuffled", func(t *testing.T) {
 		shoe := NewShoe(deckCount)
 		shoe.SetPenetration(.5)
 		shoe.AdvanceCursor(26)
-		assert.True(t, shoe.needsReshuffle)
+		assert.True(t, shoe.NeedsReshuffle())
 
 		shoe.shuffle()
-		assert.False(t, shoe.needsReshuffle)
+		assert.False(t, shoe.NeedsReshuffle())
 	})
 }

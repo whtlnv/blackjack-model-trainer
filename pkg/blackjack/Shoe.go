@@ -10,6 +10,7 @@ type Shoeish interface {
 	Peek(count int) []Card
 	AdvanceCursor(offset int) (int, error)
 	SetPenetration(deckPercentage float64)
+	NeedsReshuffle() bool
 }
 
 type Shoe struct {
@@ -84,6 +85,10 @@ func (shoe *Shoe) AdvanceCursor(offset int) (int, error) {
 
 func (shoe *Shoe) SetPenetration(deckPercentage float64) {
 	shoe.penetrationIndex = int(float64(shoe.Size()) * deckPercentage)
+}
+
+func (shoe *Shoe) NeedsReshuffle() bool {
+	return shoe.needsReshuffle
 }
 
 // Private methods
