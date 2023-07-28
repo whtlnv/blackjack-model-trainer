@@ -1,5 +1,7 @@
 package blackjack
 
+import "github.com/samber/lo"
+
 type Table struct {
 	Players []Playerish
 	Shoe    Shoeish
@@ -14,12 +16,18 @@ func NewTable(players []Playerish, shoe Shoeish) *Table {
 // Public methods
 
 func (table *Table) Run() {
-	// playersInGame := lo.Filter(table.Players, func(player Playerish, index int) bool {
-	// 	willBet, _ := player.Bet()
-	// 	return willBet
-	// })
+	lo.ForEach(table.Players, func(player Playerish, index int) {
+		player.Bet()
+	})
 
-	// play all hands
+	playerHand, dealerHand := table.dealHands()
+
+	lo.ForEach(table.Players, func(player Playerish, index int) {
+		player.Play(playerHand, dealerHand, table.Shoe)
+	})
+
+	dealerHand.Reveal()
+
 	// play dealer hand
 	// resolve all hands
 }

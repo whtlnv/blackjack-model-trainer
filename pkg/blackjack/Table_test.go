@@ -98,19 +98,35 @@ func TestDealingHands(t *testing.T) {
 	})
 }
 
-// func TestTableRun(t *testing.T) {
-// 	spy := &playerSpy{}
-// 	spy.On("Bet").Return(true, 10)
-// 	spy.On("Play", mock.Anything, mock.Anything).Return(Stand)
-// 	spy.On("Resolve").Return()
+func TestTableRun(t *testing.T) {
+	numberOfPlayers := 3
+	asPlayers := []Playerish{}
+	asSpies := []*playerSpy{}
+	for i := 0; i < numberOfPlayers; i++ {
+		spy := &playerSpy{}
+		spy.On("Bet").Return(true, 10)
+		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(3)
+		spy.On("Resolve").Return()
 
-// 	players := []Playerish{spy}
-// 	table := NewTable(players, 1)
+		asPlayers = append(asPlayers, spy)
+		asSpies = append(asSpies, spy)
+	}
 
-// 	t.Run("Should run a game with the given players", func(t *testing.T) {
-// 		table.Run()
-// 		got := len(spy.Calls)
-// 		want := 3
-// 		assert.Equal(t, want, got)
-// 	})
-// }
+	shoe := NewShoe(1)
+	shoe.SetPenetration(0.5)
+
+	table := NewTable(asPlayers, shoe)
+	table.Run()
+
+	t.Run("Should call Bet() on each player once", func(t *testing.T) {
+		for _, spy := range asSpies {
+			spy.AssertNumberOfCalls(t, "Bet", 1)
+		}
+	})
+
+	t.Run("Should call Play() on each player once", func(t *testing.T) {
+		for _, spy := range asSpies {
+			spy.AssertNumberOfCalls(t, "Play", 1)
+		}
+	})
+}
