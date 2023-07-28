@@ -17,7 +17,7 @@ type Shoe struct {
 	cards            []Card
 	cursor           int
 	penetrationIndex int
-	NeedsReshuffle   bool
+	needsReshuffle   bool
 }
 
 type CursorOutOfBoundsError struct {
@@ -43,7 +43,7 @@ func NewShoe(decks int) *Shoe {
 		cards:            []Card{},
 		cursor:           0,
 		penetrationIndex: decks * 52,
-		NeedsReshuffle:   false,
+		needsReshuffle:   false,
 	}
 
 	shoe.build()
@@ -76,7 +76,7 @@ func (shoe *Shoe) AdvanceCursor(offset int) (int, error) {
 	shoe.cursor = advanceTo
 
 	if shoe.cursor >= shoe.penetrationIndex {
-		shoe.NeedsReshuffle = true
+		shoe.needsReshuffle = true
 	}
 
 	return shoe.cursor, nil
@@ -117,5 +117,5 @@ func (shoe *Shoe) shuffle() {
 		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
 	}
 
-	shoe.NeedsReshuffle = false
+	shoe.needsReshuffle = false
 }
