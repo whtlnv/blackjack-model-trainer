@@ -26,10 +26,7 @@ func (table *Table) Run() {
 
 	table.playAllGames(playerHand, dealerHand)
 
-	dealerHand.Reveal()
-
-	// play dealer hand
-	// advance shoe cursor
+	dealerHand = table.playDealerHand(dealerHand)
 
 	// resolve all hands
 }
@@ -58,4 +55,20 @@ func (table *Table) playAllGames(playerHand Hand, dealerHand Hand) {
 	}, 0)
 
 	table.Shoe.AdvanceCursor(index)
+}
+
+func (table *Table) playDealerHand(dealerHand Hand) Hand {
+	dealerHand.Reveal()
+
+	for {
+		dealerScore, isBusted := dealerHand.Score()
+		if isBusted || dealerScore.High >= 17 {
+			break
+		}
+
+		dealerHand = append(dealerHand, table.Shoe.Peek(1)[0])
+		table.Shoe.AdvanceCursor(1)
+	}
+
+	return dealerHand
 }

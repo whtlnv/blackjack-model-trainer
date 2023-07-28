@@ -134,21 +134,106 @@ func TestPlayerGames(t *testing.T) {
 	})
 }
 
-// func TestDealerGame(t *testing.T) {
-// 	spy := &playerSpy{}
-// 	players := []Playerish{spy}
+func TestDealerGame(t *testing.T) {
+	spy := &playerSpy{}
+	players := []Playerish{spy}
 
-// 	shoe := NewShoe(1)
-// 	shoe.SetPenetration(0.5)
+	t.Run("Should stand on soft 17", func(t *testing.T) {
+		shoe := NewShoe(1)
+		shoe.cards = []Card{
+			NewCard(Three, Hearts),
+			NewCard(King, Clubs),
+		}
+		table := NewTable(players, shoe)
 
-// 	table := NewTable(players, shoe)
+		dealerHand := Hand{NewCard(Ace, Clubs), NewCard(Three, Clubs)}
+		got := table.playDealerHand(dealerHand)
 
-// 	t.Run("Should stand on soft 17 or greater", func(t *testing.T) {})
+		want := Hand{
+			NewCard(Ace, Clubs),
+			NewCard(Three, Clubs),
+			NewCard(Three, Hearts),
+		}
 
-// 	t.Run("Should stand on bust", func(t *testing.T) {})
+		assert.Equal(t, want, got)
+	})
 
-// 	t.Run("Should advance the shoe cursor", func(t *testing.T) {})
-// }
+	t.Run("Should stand on hard 17", func(t *testing.T) {
+		shoe := NewShoe(1)
+		shoe.cards = []Card{
+			NewCard(Three, Hearts),
+			NewCard(King, Clubs),
+		}
+		table := NewTable(players, shoe)
+
+		dealerHand := Hand{NewCard(Ten, Clubs), NewCard(Seven, Clubs)}
+		got := table.playDealerHand(dealerHand)
+
+		want := Hand{
+			NewCard(Ten, Clubs),
+			NewCard(Seven, Clubs),
+		}
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should stand on bust", func(t *testing.T) {
+		shoe := NewShoe(1)
+		shoe.cards = []Card{
+			NewCard(Three, Hearts),
+			NewCard(King, Clubs),
+		}
+		table := NewTable(players, shoe)
+
+		dealerHand := Hand{NewCard(King, Diamonds), NewCard(Two, Spades)}
+		got := table.playDealerHand(dealerHand)
+
+		want := Hand{
+			NewCard(King, Diamonds),
+			NewCard(Two, Spades),
+			NewCard(Three, Hearts),
+			NewCard(King, Clubs),
+		}
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should advance the shoe cursor", func(t *testing.T) {
+		shoe := NewShoe(1)
+		shoe.cards = []Card{
+			NewCard(Three, Hearts),
+			NewCard(Four, Clubs),
+			NewCard(Five, Diamonds),
+			NewCard(Six, Spades),
+		}
+		table := NewTable(players, shoe)
+
+		dealerHand := Hand{NewCard(Two, Diamonds), NewCard(Seven, Spades)}
+		table.playDealerHand(dealerHand)
+
+		want := 3
+		got := shoe.cursor
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should reveal the dealer hand", func(t *testing.T) {
+		shoe := NewShoe(1)
+		shoe.cards = []Card{
+			NewCard(Three, Hearts),
+			NewCard(Four, Clubs),
+		}
+		table := NewTable(players, shoe)
+
+		dealerHand := Hand{NewCard(King, Diamonds), NewCard(Seven, Spades)}
+		dealerHand[1].SetHole()
+
+		result := table.playDealerHand(dealerHand)
+		got := result[1].hole
+
+		assert.False(t, got)
+	})
+}
 
 func TestTableRun(t *testing.T) {
 	numberOfPlayers := 3
