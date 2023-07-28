@@ -8,6 +8,8 @@ import (
 type Shoeish interface {
 	Size() int
 	Peek(count int) []Card
+	AdvanceCursor(offset int) (int, error)
+	SetPenetration(deckPercentage float64)
 }
 
 type Shoe struct {
