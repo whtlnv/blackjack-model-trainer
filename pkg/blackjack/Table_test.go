@@ -244,7 +244,7 @@ func TestTableRun(t *testing.T) {
 		spy := &playerSpy{}
 		spy.On("Bet").Return(true, 10)
 		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(cardsUsed)
-		spy.On("Resolve").Return()
+		spy.On("Resolve", mock.AnythingOfType("Hand")).Return()
 
 		asPlayers = append(asPlayers, spy)
 		asSpies = append(asSpies, spy)
@@ -273,5 +273,11 @@ func TestTableRun(t *testing.T) {
 		want := 4 + cardsUsed
 
 		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should call Resolve() on each player once", func(t *testing.T) {
+		for _, spy := range asSpies {
+			spy.AssertNumberOfCalls(t, "Resolve", 1)
+		}
 	})
 }

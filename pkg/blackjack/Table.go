@@ -26,9 +26,11 @@ func (table *Table) Run() {
 
 	table.playAllGames(playerHand, dealerHand)
 
-	dealerHand = table.playDealerHand(dealerHand)
+	dealerGame := table.playDealerHand(dealerHand)
 
-	// resolve all hands
+	lo.ForEach(table.Players, func(player Playerish, index int) {
+		player.Resolve(dealerGame)
+	})
 }
 
 // Private methods
