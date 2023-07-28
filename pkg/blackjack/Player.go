@@ -1,5 +1,11 @@
 package blackjack
 
+type Playerish interface {
+	Bet() (bool, int)
+	Play(hand Hand, dealerHand Hand, shoe Shoeish) int
+	Resolve(dealerHand Hand)
+}
+
 type Player struct {
 	strategy Strategyish
 	Bankroll float64
@@ -20,8 +26,8 @@ func NewPlayer(strategy Strategyish) *Player {
 
 // Public methods
 
-func (player *Player) Bet() (bool, int) {
-	bet := player.strategy.Bet()
+func (player *Player) Bet() (willPlay bool, bet int) {
+	bet = player.strategy.Bet()
 	if float64(bet) > player.Bankroll {
 		return false, 0
 	}
