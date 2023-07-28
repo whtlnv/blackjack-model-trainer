@@ -24,12 +24,13 @@ func (table *Table) Run() {
 
 	playerHand, dealerHand := table.dealHands()
 
-	cardsUsed := table.playAllGames(playerHand, dealerHand)
-	table.Shoe.AdvanceCursor(cardsUsed)
+	table.playAllGames(playerHand, dealerHand)
 
 	dealerHand.Reveal()
 
 	// play dealer hand
+	// advance shoe cursor
+
 	// resolve all hands
 }
 
@@ -50,11 +51,11 @@ func (table *Table) dealHands() (playerHand Hand, dealerHand Hand) {
 	return playerHand, dealerHand
 }
 
-func (table *Table) playAllGames(playerHand Hand, dealerHand Hand) int {
+func (table *Table) playAllGames(playerHand Hand, dealerHand Hand) {
 	index := lo.Reduce(table.Players, func(acc int, player Playerish, _ int) int {
 		usedCards := player.Play(playerHand, dealerHand, table.Shoe)
 		return lo.Max([]int{acc, usedCards})
 	}, 0)
 
-	return index
+	table.Shoe.AdvanceCursor(index)
 }

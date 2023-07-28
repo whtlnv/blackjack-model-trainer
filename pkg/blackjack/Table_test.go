@@ -118,7 +118,7 @@ func TestPlayerGames(t *testing.T) {
 	playerHand := Hand{}
 	dealerHand := Hand{}
 
-	index := table.playAllGames(playerHand, dealerHand)
+	table.playAllGames(playerHand, dealerHand)
 
 	t.Run("Should play each player's hand", func(t *testing.T) {
 		spy1.AssertNumberOfCalls(t, "Play", 1)
@@ -126,12 +126,29 @@ func TestPlayerGames(t *testing.T) {
 		spy3.AssertNumberOfCalls(t, "Play", 1)
 	})
 
-	t.Run("Should return the max shoe cursor", func(t *testing.T) {
+	t.Run("Should advance the shoe cursor", func(t *testing.T) {
 		want := 5
+		got := shoe.cursor
 
-		assert.Equal(t, want, index)
+		assert.Equal(t, want, got)
 	})
 }
+
+// func TestDealerGame(t *testing.T) {
+// 	spy := &playerSpy{}
+// 	players := []Playerish{spy}
+
+// 	shoe := NewShoe(1)
+// 	shoe.SetPenetration(0.5)
+
+// 	table := NewTable(players, shoe)
+
+// 	t.Run("Should stand on soft 17 or greater", func(t *testing.T) {})
+
+// 	t.Run("Should stand on bust", func(t *testing.T) {})
+
+// 	t.Run("Should advance the shoe cursor", func(t *testing.T) {})
+// }
 
 func TestTableRun(t *testing.T) {
 	numberOfPlayers := 3
