@@ -135,12 +135,13 @@ func TestPlayerGames(t *testing.T) {
 
 func TestTableRun(t *testing.T) {
 	numberOfPlayers := 3
+	cardsUsed := 5
 	asPlayers := []Playerish{}
 	asSpies := []*playerSpy{}
 	for i := 0; i < numberOfPlayers; i++ {
 		spy := &playerSpy{}
 		spy.On("Bet").Return(true, 10)
-		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(3)
+		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(cardsUsed)
 		spy.On("Resolve").Return()
 
 		asPlayers = append(asPlayers, spy)
@@ -163,5 +164,12 @@ func TestTableRun(t *testing.T) {
 		for _, spy := range asSpies {
 			spy.AssertNumberOfCalls(t, "Play", 1)
 		}
+	})
+
+	t.Run("Should advance the shoe cursor", func(t *testing.T) {
+		got := shoe.cursor
+		want := 4 + cardsUsed
+
+		assert.Equal(t, want, got)
 	})
 }

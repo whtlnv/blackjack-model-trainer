@@ -24,9 +24,8 @@ func (table *Table) Run() {
 
 	playerHand, dealerHand := table.dealHands()
 
-	lo.ForEach(table.Players, func(player Playerish, index int) {
-		player.Play(playerHand, dealerHand, table.Shoe)
-	})
+	cardsUsed := table.playAllGames(playerHand, dealerHand)
+	table.Shoe.AdvanceCursor(cardsUsed)
 
 	dealerHand.Reveal()
 
