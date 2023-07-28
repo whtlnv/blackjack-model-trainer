@@ -97,7 +97,7 @@ func TestPenetration(t *testing.T) {
 		shoe.AdvanceCursor(26)
 		assert.True(t, shoe.NeedsReshuffle())
 
-		shoe.shuffle()
+		shoe.Shuffle()
 		assert.False(t, shoe.NeedsReshuffle())
 	})
 }

@@ -7,6 +7,7 @@ import (
 
 type Shoeish interface {
 	Size() int
+	Shuffle()
 	Peek(count int) []Card
 	AdvanceCursor(offset int) (int, error)
 	SetPenetration(deckPercentage float64)
@@ -48,7 +49,7 @@ func NewShoe(decks int) *Shoe {
 	}
 
 	shoe.build()
-	shoe.shuffle()
+	shoe.Shuffle()
 
 	return shoe
 }
@@ -57,6 +58,27 @@ func NewShoe(decks int) *Shoe {
 
 func (shoe *Shoe) Size() int {
 	return len(shoe.cards)
+}
+
+func (shoe *Shoe) Shuffle() {
+	// Fisher-Yates shuffle
+	for i := range shoe.cards {
+		j := rand.Intn(i + 1)
+		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
+	}
+
+	// Cut the deck
+	firstHalf := shoe.cards[:len(shoe.cards)/2]
+	secondHalf := shoe.cards[len(shoe.cards)/2:]
+	shoe.cards = append(secondHalf, firstHalf...)
+
+	// shuffle
+	for i := range shoe.cards {
+		j := rand.Intn(shoe.Size() - 1)
+		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
+	}
+
+	shoe.needsReshuffle = false
 }
 
 func (shoe *Shoe) Peek(count int) []Card {
@@ -102,25 +124,4 @@ func (shoe *Shoe) build() {
 			}
 		}
 	}
-}
-
-func (shoe *Shoe) shuffle() {
-	// Fisher-Yates shuffle
-	for i := range shoe.cards {
-		j := rand.Intn(i + 1)
-		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
-	}
-
-	// Cut the deck
-	firstHalf := shoe.cards[:len(shoe.cards)/2]
-	secondHalf := shoe.cards[len(shoe.cards)/2:]
-	shoe.cards = append(secondHalf, firstHalf...)
-
-	// shuffle
-	for i := range shoe.cards {
-		j := rand.Intn(shoe.Size() - 1)
-		shoe.cards[i], shoe.cards[j] = shoe.cards[j], shoe.cards[i]
-	}
-
-	shoe.needsReshuffle = false
 }

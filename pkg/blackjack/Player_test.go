@@ -69,15 +69,11 @@ func (shoe *shoeMock) Peek(count int) []Card {
 	return peek
 }
 
-func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) {
-	return 0, nil
-}
-
+// Not used in these tests
+func (shoe *shoeMock) Shuffle()                              {}
+func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) { return 0, nil }
 func (shoe *shoeMock) SetPenetration(deckPercentage float64) {}
-
-func (shoe *shoeMock) NeedsReshuffle() bool {
-	return false
-}
+func (shoe *shoeMock) NeedsReshuffle() bool                  { return false }
 
 // Tests
 
