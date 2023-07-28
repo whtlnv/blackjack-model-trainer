@@ -1,6 +1,8 @@
 package blackjack
 
-import "github.com/samber/lo"
+import (
+	"github.com/samber/lo"
+)
 
 type Table struct {
 	Players []Playerish
@@ -47,4 +49,13 @@ func (table *Table) dealHands() (playerHand Hand, dealerHand Hand) {
 	dealerHand[1].SetHole()
 
 	return playerHand, dealerHand
+}
+
+func (table *Table) playAllGames(playerHand Hand, dealerHand Hand) int {
+	index := lo.Reduce(table.Players, func(acc int, player Playerish, _ int) int {
+		usedCards := player.Play(playerHand, dealerHand, table.Shoe)
+		return lo.Max([]int{acc, usedCards})
+	}, 0)
+
+	return index
 }

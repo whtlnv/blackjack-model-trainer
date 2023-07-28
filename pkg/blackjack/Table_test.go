@@ -98,6 +98,41 @@ func TestDealingHands(t *testing.T) {
 	})
 }
 
+func TestPlayerGames(t *testing.T) {
+	spy1 := &playerSpy{}
+	spy1.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(0)
+
+	spy2 := &playerSpy{}
+	spy2.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(5)
+
+	spy3 := &playerSpy{}
+	spy3.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(3)
+
+	players := []Playerish{spy1, spy2, spy3}
+
+	shoe := NewShoe(1)
+	shoe.SetPenetration(0.5)
+
+	table := NewTable(players, shoe)
+
+	playerHand := Hand{}
+	dealerHand := Hand{}
+
+	index := table.playAllGames(playerHand, dealerHand)
+
+	t.Run("Should play each player's hand", func(t *testing.T) {
+		spy1.AssertNumberOfCalls(t, "Play", 1)
+		spy2.AssertNumberOfCalls(t, "Play", 1)
+		spy3.AssertNumberOfCalls(t, "Play", 1)
+	})
+
+	t.Run("Should return the max shoe cursor", func(t *testing.T) {
+		want := 5
+
+		assert.Equal(t, want, index)
+	})
+}
+
 func TestTableRun(t *testing.T) {
 	numberOfPlayers := 3
 	asPlayers := []Playerish{}
