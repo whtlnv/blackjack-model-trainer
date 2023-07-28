@@ -39,6 +39,10 @@ func (player *Player) Bet() (willPlay bool, bet int) {
 }
 
 func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
+	if len(player.Games) == 0 {
+		return 0
+	}
+
 	shoeIndex := 0
 	player.Games[0].SetHand(hand)
 

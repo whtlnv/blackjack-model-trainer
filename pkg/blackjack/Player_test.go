@@ -294,6 +294,21 @@ func TestPlayerPlay(t *testing.T) {
 
 		assert.Equal(t, 5, cardsTaken)
 	})
+
+	t.Run("Should not play anything (nor crash) if no bet is made", func(t *testing.T) {
+		player, shoe := initTest(100, false, false, true)
+
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Eight, Clubs), NewCard(Eight, Hearts)}
+
+		shoeIndex := player.Play(playerHand, dealerHand, shoe)
+
+		assert.Equal(t, 0, shoeIndex)
+	})
 }
 
 func TestPlayerBankrollAfterPlay(t *testing.T) {
@@ -482,9 +497,9 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		dealerHoleCard.SetHole()
 
 		dealerHand := Hand{dealerUpcard, dealerHoleCard}
-		playerHand1 := Hand{NewCard(Eight, Clubs), NewCard(Eight, Hearts)}
+		playerHand := Hand{NewCard(Eight, Clubs), NewCard(Eight, Hearts)}
 
-		player.Play(playerHand1, dealerHand, shoe)
+		player.Play(playerHand, dealerHand, shoe)
 
 		dealerHand.Reveal()
 		player.Resolve(dealerHand)
