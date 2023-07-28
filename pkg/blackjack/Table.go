@@ -38,9 +38,9 @@ func (table *Table) Run() {
 // Private methods
 
 func (table *Table) dealHands() (playerHand Hand, dealerHand Hand) {
-	// if table.Shoe.NeedsReshuffle {
-	// 	table.Shoe.shuffle()
-	// }
+	if table.Shoe.NeedsReshuffle() {
+		table.Shoe.Shuffle()
+	}
 
 	topCards := table.Shoe.Peek(4)
 	table.Shoe.AdvanceCursor(4)

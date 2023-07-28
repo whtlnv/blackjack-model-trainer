@@ -87,15 +87,15 @@ func TestDealingHands(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 
-	// t.Run("Should shuffle the shoe if the penetration index is reached", func(t *testing.T) {
-	// 	shoe.AdvanceCursor(26)
-	// 	table.dealHands()
+	t.Run("Should shuffle the shoe if the penetration index is reached", func(t *testing.T) {
+		shoe.AdvanceCursor(27)
+		table.dealHands()
 
-	// 	got := shoe.cursor
-	// 	want := 4
+		got := shoe.cursor
+		want := 4
 
-	// 	assert.Equal(t, want, got)
-	// })
+		assert.Equal(t, want, got)
+	})
 }
 
 // func TestTableRun(t *testing.T) {
