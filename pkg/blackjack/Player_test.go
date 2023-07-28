@@ -299,6 +299,7 @@ func TestPlayerPlay(t *testing.T) {
 func TestPlayerBankrollAfterPlay(t *testing.T) {
 	initTest := func() (*Player, *shoeMock) {
 		// TODO: refactor getTestStrategy into its own file
+		// because it's imported from another test file
 		raw, err := getTestStrategy()
 		if err != nil {
 			t.Fatal(err)
@@ -363,11 +364,11 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
 
 		player.Play(playerHand, dealerHand, shoe)
+		assert.Equal(t, 2, len(player.Games))
 
 		dealerHand.Reveal()
 		player.Resolve(dealerHand)
 
-		assert.Equal(t, 2, len(player.Games))
 		assert.Equal(t, 1000.0, player.Bankroll)
 	})
 
@@ -383,11 +384,11 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
 
 		player.Play(playerHand, dealerHand, shoe)
+		assert.Equal(t, 2, len(player.Games))
 
 		dealerHand.Reveal()
 		player.Resolve(dealerHand)
 
-		assert.Equal(t, 2, len(player.Games))
 		assert.Equal(t, 1002.0, player.Bankroll)
 	})
 
@@ -403,11 +404,11 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
 
 		player.Play(playerHand, dealerHand, shoe)
+		assert.Equal(t, 2, len(player.Games))
 
 		dealerHand.Reveal()
 		player.Resolve(dealerHand)
 
-		assert.Equal(t, 2, len(player.Games))
 		assert.Equal(t, 998.0, player.Bankroll)
 	})
 
@@ -470,5 +471,24 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 0, cardsTaken)
 		assert.Equal(t, 1000.0, player.Bankroll)
+	})
+
+	t.Run("Should clear games after resolving", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand1 := Hand{NewCard(Eight, Clubs), NewCard(Eight, Hearts)}
+
+		player.Play(playerHand1, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 0, len(player.Games))
 	})
 }

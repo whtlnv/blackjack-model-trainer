@@ -58,6 +58,8 @@ func (player *Player) Resolve(dealerHand Hand) {
 	}
 
 	player.Bankroll += winnings
+	player.Games = []*Game{}
+
 }
 
 // Private methods
