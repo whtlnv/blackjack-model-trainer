@@ -79,6 +79,7 @@ func (shoe *Shoe) Shuffle() {
 	}
 
 	shoe.needsReshuffle = false
+	shoe.cursor = 0
 }
 
 func (shoe *Shoe) Peek(count int) []Card {

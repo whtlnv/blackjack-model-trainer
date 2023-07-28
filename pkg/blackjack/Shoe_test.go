@@ -22,6 +22,29 @@ func TestShoeInitialization(t *testing.T) {
 	})
 }
 
+func TestShoeShuffle(t *testing.T) {
+	deckCount := 1
+	shoe := NewShoe(deckCount)
+	originalCards := shoe.cards
+
+	t.Run("Shoe should shuffle", func(t *testing.T) {
+		shoe.Shuffle()
+		assert.NotEqual(t, originalCards, shoe.cards)
+	})
+
+	t.Run("Should reset the reshuffle flag", func(t *testing.T) {
+		shoe.needsReshuffle = true
+		shoe.Shuffle()
+		assert.False(t, shoe.needsReshuffle)
+	})
+
+	t.Run("Should reset the cursor", func(t *testing.T) {
+		shoe.cursor = 5
+		shoe.Shuffle()
+		assert.Equal(t, 0, shoe.cursor)
+	})
+}
+
 func TestShoePeek(t *testing.T) {
 	deckCount := 1
 	shoe := NewShoe(deckCount)
