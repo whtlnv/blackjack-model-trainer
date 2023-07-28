@@ -48,12 +48,55 @@ func TestTableInitialization(t *testing.T) {
 	})
 }
 
-// func TestDealingHands(t *testing.T) {
-// 	t.Run("Should deal a player hand", func(t *testing.T) {
-// 		shoe := NewShoe(deckCount)
+func TestDealingHands(t *testing.T) {
+	spy := &playerSpy{}
+	players := []Playerish{spy}
 
-// 	})
-// }
+	shoe := NewShoe(1)
+	shoe.SetPenetration(0.5)
+
+	table := NewTable(players, shoe)
+
+	t.Run("Should advance the shoe cursor", func(t *testing.T) {
+		table.dealHands()
+
+		got := shoe.cursor
+		want := 4
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should deal a player hand", func(t *testing.T) {
+		topCards := shoe.Peek(4)
+		playerHand, _ := table.dealHands()
+
+		got := playerHand
+		want := Hand{topCards[0], topCards[2]}
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should deal a dealer hand", func(t *testing.T) {
+		topCards := shoe.Peek(4)
+		_, dealerHand := table.dealHands()
+
+		got := dealerHand
+		want := Hand{topCards[1], topCards[3]}
+		want[1].SetHole()
+
+		assert.Equal(t, want, got)
+	})
+
+	// t.Run("Should shuffle the shoe if the penetration index is reached", func(t *testing.T) {
+	// 	shoe.AdvanceCursor(26)
+	// 	table.dealHands()
+
+	// 	got := shoe.cursor
+	// 	want := 4
+
+	// 	assert.Equal(t, want, got)
+	// })
+}
 
 // func TestTableRun(t *testing.T) {
 // 	spy := &playerSpy{}
