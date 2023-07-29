@@ -101,6 +101,22 @@ func TestPlayerInitialization(t *testing.T) {
 
 		assert.Equal(t, 0, player.GamesPlayed)
 	})
+
+	t.Run("Should initialize player games won counter", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		player := NewPlayer(strategy)
+
+		assert.Equal(t, 0, player.GamesWon)
+	})
+
+	t.Run("Should initialize player games lost counter", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		player := NewPlayer(strategy)
+
+		assert.Equal(t, 0, player.GamesLost)
+	})
 }
 
 func TestPlayerBet(t *testing.T) {
@@ -147,16 +163,6 @@ func TestPlayerBet(t *testing.T) {
 
 		player.Bet( /* shoe? */ )
 		assert.Equal(t, 1, player.Games[0].bet)
-	})
-
-	t.Run("Should increase the games played counter", func(t *testing.T) {
-		player := NewPlayer(strategy)
-		player.Bankroll = 10
-
-		assert.Equal(t, 0, player.GamesPlayed)
-
-		player.Bet( /* shoe? */ )
-		assert.Equal(t, 1, player.GamesPlayed)
 	})
 }
 
@@ -530,5 +536,62 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 0, len(player.Games))
+	})
+
+	t.Run("Should increase the games played counter", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(King, Clubs), NewCard(Queen, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, player.GamesPlayed)
+	})
+
+	t.Run("Should increase the gamesWon counter", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(King, Clubs), NewCard(Queen, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, player.GamesWon)
+	})
+
+	t.Run("Should increase the gamesLost counter", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Ten, Clubs)
+		dealerHoleCard := NewCard(Nine, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(King, Clubs), NewCard(Seven, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, player.GamesLost)
 	})
 }

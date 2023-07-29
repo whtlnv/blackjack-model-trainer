@@ -12,6 +12,8 @@ type Player struct {
 	Games    []*Game
 
 	GamesPlayed int
+	GamesWon    int
+	GamesLost   int
 }
 
 // Factory
@@ -37,8 +39,6 @@ func (player *Player) Bet() (willPlay bool, bet int) {
 	player.subtractFromBankroll(bet)
 	player.Games = []*Game{NewGame(bet)}
 
-	player.GamesPlayed++
-
 	return true, bet
 }
 
@@ -62,7 +62,10 @@ func (player *Player) Resolve(dealerHand Hand) {
 	winnings := 0.0
 
 	for _, game := range player.Games {
-		winnings += game.Resolve(&dealerHand)
+		won := game.Resolve(&dealerHand)
+		winnings += won
+
+		player.updateStatistics(game, won)
 	}
 
 	player.Bankroll += winnings
@@ -131,4 +134,13 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 	}
 
 	return shoeIndex
+}
+
+func (player *Player) updateStatistics(game *Game, won float64) {
+	player.GamesPlayed++
+	if won > float64(game.bet) {
+		player.GamesWon++
+	} else if won < float64(game.bet) {
+		player.GamesLost++
+	}
 }
