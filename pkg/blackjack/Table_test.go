@@ -237,13 +237,16 @@ func TestDealerGame(t *testing.T) {
 
 func TestTableRun(t *testing.T) {
 	numberOfPlayers := 3
-	cardsUsed := 5
+	dealtCards := 4
+	playerCards := 5
+	dealerCards := 1
+
 	asPlayers := []Playerish{}
 	asSpies := []*playerSpy{}
 	for i := 0; i < numberOfPlayers; i++ {
 		spy := &playerSpy{}
 		spy.On("Bet").Return(true, 10)
-		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(cardsUsed)
+		spy.On("Play", mock.AnythingOfType("Hand"), mock.AnythingOfType("Hand"), mock.Anything).Return(playerCards)
 		spy.On("Resolve", mock.AnythingOfType("Hand")).Return()
 
 		asPlayers = append(asPlayers, spy)
@@ -251,6 +254,18 @@ func TestTableRun(t *testing.T) {
 	}
 
 	shoe := NewShoe(1)
+	shoe.cards = []Card{
+		NewCard(Three, Hearts),
+		NewCard(King, Diamonds),
+		NewCard(Four, Clubs),
+		NewCard(Five, Diamonds),
+		NewCard(Two, Spades),
+		NewCard(Three, Hearts),
+		NewCard(King, Diamonds),
+		NewCard(Four, Clubs),
+		NewCard(Five, Diamonds),
+		NewCard(Two, Spades),
+	}
 	shoe.SetPenetration(0.5)
 
 	table := NewTable(asPlayers, shoe)
@@ -268,9 +283,9 @@ func TestTableRun(t *testing.T) {
 		}
 	})
 
-	t.Run("Should advance the shoe cursor", func(t *testing.T) {
+	t.Run("Should advance the shoe cursor by the cards used", func(t *testing.T) {
 		got := shoe.cursor
-		want := 4 + cardsUsed
+		want := dealtCards + playerCards + dealerCards
 
 		assert.Equal(t, want, got)
 	})
