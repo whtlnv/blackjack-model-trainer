@@ -10,6 +10,8 @@ type Player struct {
 	strategy Strategyish
 	Bankroll float64
 	Games    []*Game
+
+	GamesPlayed int
 }
 
 // Factory
@@ -34,6 +36,8 @@ func (player *Player) Bet() (willPlay bool, bet int) {
 
 	player.subtractFromBankroll(bet)
 	player.Games = []*Game{NewGame(bet)}
+
+	player.GamesPlayed++
 
 	return true, bet
 }

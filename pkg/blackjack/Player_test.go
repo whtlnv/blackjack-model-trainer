@@ -81,10 +81,25 @@ func TestPlayerInitialization(t *testing.T) {
 	t.Run("Should set player initial bankroll", func(t *testing.T) {
 		strategy := &strategyMock{}
 		strategy.initialBankroll = 100
-		strategy.alwaysHit = true
 		player := NewPlayer(strategy)
 
 		assert.Equal(t, float64(strategy.initialBankroll), player.Bankroll)
+	})
+
+	t.Run("Should initialize player games", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		player := NewPlayer(strategy)
+
+		assert.Equal(t, 0, len(player.Games))
+	})
+
+	t.Run("Should initialize player games played counter", func(t *testing.T) {
+		strategy := &strategyMock{}
+		strategy.initialBankroll = 100
+		player := NewPlayer(strategy)
+
+		assert.Equal(t, 0, player.GamesPlayed)
 	})
 }
 
@@ -132,6 +147,16 @@ func TestPlayerBet(t *testing.T) {
 
 		player.Bet( /* shoe? */ )
 		assert.Equal(t, 1, player.Games[0].bet)
+	})
+
+	t.Run("Should increase the games played counter", func(t *testing.T) {
+		player := NewPlayer(strategy)
+		player.Bankroll = 10
+
+		assert.Equal(t, 0, player.GamesPlayed)
+
+		player.Bet( /* shoe? */ )
+		assert.Equal(t, 1, player.GamesPlayed)
 	})
 }
 
