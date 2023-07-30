@@ -123,7 +123,7 @@ func TestPlayerGames(t *testing.T) {
 	playerHand := Hand{}
 	dealerHand := Hand{}
 
-	table.playAllGames(playerHand, dealerHand)
+	table.playAllHands(playerHand, dealerHand)
 
 	t.Run("Should play each player's hand", func(t *testing.T) {
 		spy1.AssertNumberOfCalls(t, "Play", 1)

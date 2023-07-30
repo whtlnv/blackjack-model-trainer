@@ -24,7 +24,7 @@ func (table *Table) Run() {
 
 	playerHand, dealerHand := table.dealHands()
 
-	table.playAllGames(playerHand, dealerHand)
+	table.playAllHands(playerHand, dealerHand)
 
 	dealerGame := table.playDealerHand(dealerHand)
 
@@ -64,7 +64,7 @@ func (table *Table) dealHands() (playerHand Hand, dealerHand Hand) {
 	return playerHand, dealerHand
 }
 
-func (table *Table) playAllGames(playerHand Hand, dealerHand Hand) {
+func (table *Table) playAllHands(playerHand Hand, dealerHand Hand) {
 	index := lo.Reduce(table.Players, func(acc int, player Playerish, _ int) int {
 		usedCards := player.Play(playerHand, dealerHand, table.Shoe)
 		return lo.Max([]int{acc, usedCards})
