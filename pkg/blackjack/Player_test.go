@@ -595,3 +595,42 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		assert.Equal(t, 1, player.GamesLost)
 	})
 }
+
+func TestPlayerGetStatistics(t *testing.T) {
+	strategy := &strategyMock{}
+	strategy.initialBankroll = 100
+	strategy.alwaysHit = true
+
+	player := NewPlayer(strategy)
+	player.GamesPlayed = 10
+	player.GamesWon = 1
+	player.GamesLost = 7
+
+	t.Run("Should return the games played", func(t *testing.T) {
+		got := player.GetStatistics().GamesPlayed
+		want := 10
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return the games won", func(t *testing.T) {
+		got := player.GetStatistics().GamesWon
+		want := 1
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return the games lost", func(t *testing.T) {
+		got := player.GetStatistics().GamesLost
+		want := 7
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return the games pushed", func(t *testing.T) {
+		got := player.GetStatistics().GamesPushed
+		want := 2
+
+		assert.Equal(t, want, got)
+	})
+}

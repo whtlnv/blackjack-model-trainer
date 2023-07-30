@@ -4,6 +4,7 @@ type Playerish interface {
 	Bet() (bool, int)
 	Play(hand Hand, dealerHand Hand, shoe Shoeish) int
 	Resolve(dealerHand Hand)
+	GetStatistics() PlayerStatistics
 }
 
 type Player struct {
@@ -14,6 +15,13 @@ type Player struct {
 	GamesPlayed int
 	GamesWon    int
 	GamesLost   int
+}
+
+type PlayerStatistics struct {
+	GamesPlayed int
+	GamesWon    int
+	GamesLost   int
+	GamesPushed int
 }
 
 // Factory
@@ -71,6 +79,17 @@ func (player *Player) Resolve(dealerHand Hand) {
 	player.Bankroll += winnings
 	player.Games = []*Game{}
 
+}
+
+func (player *Player) GetStatistics() PlayerStatistics {
+	gamesPushed := player.GamesPlayed - player.GamesWon - player.GamesLost
+
+	return PlayerStatistics{
+		GamesPlayed: player.GamesPlayed,
+		GamesWon:    player.GamesWon,
+		GamesLost:   player.GamesLost,
+		GamesPushed: gamesPushed,
+	}
 }
 
 // Private methods
