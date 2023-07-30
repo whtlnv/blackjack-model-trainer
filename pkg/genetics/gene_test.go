@@ -21,14 +21,14 @@ func (r *randomizerMock) PickOne(options []byte) byte {
 	return args.Get(0).(byte)
 }
 
-func TestGeneMerging(t *testing.T) {
+func TestChromosomeMerging(t *testing.T) {
 	bases := []byte("ABC")
 	sequencing := [][]byte{bases, bases, bases, bases, bases}
 	mutationRate := 0.1
-	geneA := NewGene([]byte("AAAAA"), sequencing, mutationRate)
-	geneB := NewGene([]byte("BBBBB"), sequencing, mutationRate)
+	subjectA := NewChromosome([]byte("AAAAA"), sequencing, mutationRate)
+	subjectB := NewChromosome([]byte("BBBBB"), sequencing, mutationRate)
 
-	t.Run("Should merge two genes", func(t *testing.T) {
+	t.Run("Should merge two chromosomes", func(t *testing.T) {
 		randomizerMock := &randomizerMock{}
 		// alternate between A and B
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
@@ -40,7 +40,7 @@ func TestGeneMerging(t *testing.T) {
 		randomizerMock.On("EventDidHappen", mutationRate).Return(false)
 
 		want := []byte("ABABA")
-		got := geneA.Merge(geneB, randomizerMock)
+		got := subjectA.Merge(subjectB, randomizerMock)
 		assert.Equal(t, want, got.Raw())
 	})
 
@@ -55,7 +55,7 @@ func TestGeneMerging(t *testing.T) {
 		randomizerMock.On("PickOne", bases).Return(byte('C')).Once()
 
 		want := []byte("CAAAA")
-		got := geneA.Merge(geneB, randomizerMock)
+		got := subjectA.Merge(subjectB, randomizerMock)
 		assert.Equal(t, want, got.Raw())
 	})
 }

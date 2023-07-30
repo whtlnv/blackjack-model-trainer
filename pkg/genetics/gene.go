@@ -9,47 +9,47 @@ type Randomizerish interface {
 
 // /TODO
 
-type Gene struct {
+type Chromosome struct {
 	raw          []byte
 	sequencing   [][]byte
 	mutationRate float64
 }
 
-func NewGene(raw []byte, sequencing [][]byte, mutationRate float64) *Gene {
-	return &Gene{raw, sequencing, mutationRate}
+func NewChromosome(raw []byte, sequencing [][]byte, mutationRate float64) *Chromosome {
+	return &Chromosome{raw, sequencing, mutationRate}
 }
 
-func (gene *Gene) Raw() []byte {
-	return gene.raw
+func (chromosome *Chromosome) Raw() []byte {
+	return chromosome.raw
 }
 
-func (gene *Gene) Merge(other *Gene, randomizer Randomizerish) *Gene {
-	merged := make([]byte, len(gene.raw))
+func (chromosome *Chromosome) Merge(other *Chromosome, randomizer Randomizerish) *Chromosome {
+	merged := make([]byte, len(chromosome.raw))
 	myGeneWasChosen := func() bool { return randomizer.EventDidHappen(0.5) }
 
-	for i := 0; i < len(gene.raw); i++ {
+	for i := 0; i < len(chromosome.raw); i++ {
 		if myGeneWasChosen() {
-			merged[i] = gene.raw[i]
+			merged[i] = chromosome.raw[i]
 		} else {
 			merged[i] = other.raw[i]
 		}
 	}
 
-	return NewGene(merged, gene.sequencing, gene.mutationRate).Mutate(randomizer)
+	return NewChromosome(merged, chromosome.sequencing, chromosome.mutationRate).Mutate(randomizer)
 }
 
-func (gene *Gene) Mutate(randomizer Randomizerish) *Gene {
-	mutated := make([]byte, len(gene.raw))
-	shouldMutate := func() bool { return randomizer.EventDidHappen(gene.mutationRate) }
+func (chromosome *Chromosome) Mutate(randomizer Randomizerish) *Chromosome {
+	mutated := make([]byte, len(chromosome.raw))
+	shouldMutate := func() bool { return randomizer.EventDidHappen(chromosome.mutationRate) }
 
-	for i := 0; i < len(gene.raw); i++ {
+	for i := 0; i < len(chromosome.raw); i++ {
 		if shouldMutate() {
-			mutated[i] = randomizer.PickOne(gene.sequencing[i])
+			mutated[i] = randomizer.PickOne(chromosome.sequencing[i])
 		} else {
-			mutated[i] = gene.raw[i]
+			mutated[i] = chromosome.raw[i]
 		}
 	}
 
-	gene.raw = mutated
-	return gene
+	chromosome.raw = mutated
+	return chromosome
 }
