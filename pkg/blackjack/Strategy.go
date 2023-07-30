@@ -17,12 +17,16 @@ type Strategy struct {
 	hardMap         map[PlayerHand]map[DealerHand]PlayerAction
 	mainGameBetMap  map[int]int
 	initialBankroll int
+
+	raw []byte
 }
 
 // Factory
 
 func NewStrategy(raw []byte) (*Strategy, error) {
 	strategy := &Strategy{}
+
+	strategy.raw = raw
 
 	err := validateRawStrategy(raw)
 	if err != nil {
@@ -78,6 +82,10 @@ func (strategy *Strategy) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 
 func (strategy *Strategy) Bet() int {
 	return strategy.mainGameBetMap[0]
+}
+
+func (strategy *Strategy) GetEncodedStrategy() []byte {
+	return strategy.raw
 }
 
 // Private methods

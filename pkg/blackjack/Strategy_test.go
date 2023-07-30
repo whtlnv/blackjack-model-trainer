@@ -176,3 +176,17 @@ func TestStrategyParsingErrors(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestStrategyReturnEncodedStrategy(t *testing.T) {
+	raw, err := getTestStrategy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy, _ := NewStrategy(raw)
+
+	t.Run("Should return encoded strategy", func(t *testing.T) {
+		got := strategy.GetEncodedStrategy()
+		want := raw
+		assert.Equal(t, want, got)
+	})
+}
