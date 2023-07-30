@@ -594,6 +594,27 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 1, player.GamesLost)
 	})
+
+	t.Run("Should increase counters by 1 when splitting", func(t *testing.T) {
+		player, shoe := initTest()
+
+		player.Bet()
+		dealerUpcard := NewCard(Seven, Clubs)
+		dealerHoleCard := NewCard(Ten, Hearts)
+		dealerHoleCard.SetHole()
+
+		dealerHand := Hand{dealerUpcard, dealerHoleCard}
+		playerHand := Hand{NewCard(Ace, Clubs), NewCard(Ace, Hearts)}
+
+		player.Play(playerHand, dealerHand, shoe)
+		assert.Equal(t, 2, len(player.Games))
+
+		dealerHand.Reveal()
+		player.Resolve(dealerHand)
+
+		assert.Equal(t, 1, player.GamesPlayed)
+		assert.Equal(t, 1, player.GamesWon)
+	})
 }
 
 func TestPlayerGetStatistics(t *testing.T) {

@@ -67,18 +67,18 @@ func (player *Player) Play(hand Hand, dealerHand Hand, shoe Shoeish) int {
 }
 
 func (player *Player) Resolve(dealerHand Hand) {
+	totalBet := 0
 	winnings := 0.0
 
 	for _, game := range player.Games {
-		won := game.Resolve(&dealerHand)
-		winnings += won
-
-		player.updateStatistics(game, won)
+		totalBet += game.bet
+		winnings += game.Resolve(&dealerHand)
 	}
+
+	player.updateStatistics(float64(totalBet), winnings)
 
 	player.Bankroll += winnings
 	player.Games = []*Game{}
-
 }
 
 func (player *Player) GetStatistics() PlayerStatistics {
@@ -155,11 +155,11 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 	return shoeIndex
 }
 
-func (player *Player) updateStatistics(game *Game, won float64) {
+func (player *Player) updateStatistics(bet float64, won float64) {
 	player.GamesPlayed++
-	if won > float64(game.bet) {
+	if won > bet {
 		player.GamesWon++
-	} else if won < float64(game.bet) {
+	} else if won < bet {
 		player.GamesLost++
 	}
 }
