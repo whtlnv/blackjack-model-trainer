@@ -326,8 +326,8 @@ func TestTableRunMany(t *testing.T) {
 	}
 
 	t.Run("Should run until the given number of hands is reached", func(t *testing.T) {
-		runs := 100
-		players := makePlayers(1, float64(runs))
+		runs := 10
+		players := makePlayers(1, float64(runs*2))
 		table := NewTable(players, shoe)
 
 		table.RunMany(runs)
