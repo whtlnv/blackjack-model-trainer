@@ -22,6 +22,9 @@ type PlayerStatistics struct {
 	GamesWon    int
 	GamesLost   int
 	GamesPushed int
+
+	Bankroll      float64
+	BankrollDelta float64
 }
 
 // Factory
@@ -83,12 +86,15 @@ func (player *Player) Resolve(dealerHand Hand) {
 
 func (player *Player) GetStatistics() PlayerStatistics {
 	gamesPushed := player.GamesPlayed - player.GamesWon - player.GamesLost
+	bankrollDelta := player.Bankroll - player.strategy.GetInitialBankroll()
 
 	return PlayerStatistics{
-		GamesPlayed: player.GamesPlayed,
-		GamesWon:    player.GamesWon,
-		GamesLost:   player.GamesLost,
-		GamesPushed: gamesPushed,
+		GamesPlayed:   player.GamesPlayed,
+		GamesWon:      player.GamesWon,
+		GamesLost:     player.GamesLost,
+		GamesPushed:   gamesPushed,
+		Bankroll:      player.Bankroll,
+		BankrollDelta: bankrollDelta,
 	}
 }
 

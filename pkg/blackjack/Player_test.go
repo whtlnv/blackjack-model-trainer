@@ -654,4 +654,19 @@ func TestPlayerGetStatistics(t *testing.T) {
 
 		assert.Equal(t, want, got)
 	})
+
+	t.Run("Should return the current bankroll", func(t *testing.T) {
+		got := player.GetStatistics().Bankroll
+		want := 100.0
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return bankroll delta", func(t *testing.T) {
+		player.Bankroll = 200
+		got := player.GetStatistics().BankrollDelta
+		want := 100.0
+
+		assert.Equal(t, want, got)
+	})
 }
