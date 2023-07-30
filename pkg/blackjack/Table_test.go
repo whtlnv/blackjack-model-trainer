@@ -27,6 +27,11 @@ func (p *playerSpy) Resolve(dealerHand Hand) {
 	p.Called(dealerHand)
 }
 
+func (p *playerSpy) GetStatistics() PlayerStatistics {
+	args := p.Called()
+	return args.Get(0).(PlayerStatistics)
+}
+
 // Tests
 
 func TestTableInitialization(t *testing.T) {
@@ -294,5 +299,55 @@ func TestTableRun(t *testing.T) {
 		for _, spy := range asSpies {
 			spy.AssertNumberOfCalls(t, "Resolve", 1)
 		}
+	})
+}
+
+func TestTableRunMany(t *testing.T) {
+	shoe := NewShoe(1)
+	shoe.SetPenetration(0.5)
+
+	// TODO: refactor getTestStrategy into its own file
+	// because it's imported from another test file
+	raw, err := getTestStrategy()
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy, _ := NewStrategy(raw)
+
+	makePlayers := func(numberOfPlayers int, bankroll float64) []Playerish {
+		players := []Playerish{}
+		for i := 0; i < numberOfPlayers; i++ {
+			aPlayer := NewPlayer(strategy)
+			aPlayer.Bankroll = bankroll
+			players = append(players, aPlayer)
+		}
+
+		return players
+	}
+
+	t.Run("Should run until the given number of hands is reached", func(t *testing.T) {
+		runs := 100
+		players := makePlayers(1, float64(runs))
+		table := NewTable(players, shoe)
+
+		table.RunMany(runs)
+
+		got := players[0].GetStatistics().GamesPlayed
+		want := runs
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should stop running if all players run out of money", func(t *testing.T) {
+		runs := 100
+		players := makePlayers(1, 0)
+		table := NewTable(players, shoe)
+
+		table.RunMany(runs)
+
+		got := players[0].GetStatistics().GamesPlayed
+		want := 0
+
+		assert.Equal(t, want, got)
 	})
 }

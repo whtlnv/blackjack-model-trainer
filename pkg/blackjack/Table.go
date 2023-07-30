@@ -33,6 +33,20 @@ func (table *Table) Run() {
 	})
 }
 
+func (table *Table) RunMany(games int) {
+	for i := 0; i < games; i++ {
+		tableBankroll := lo.Reduce(table.Players, func(acc float64, player Playerish, _ int) float64 {
+			return acc + player.GetStatistics().Bankroll
+		}, 0.0)
+
+		if tableBankroll <= 0.0 {
+			break
+		}
+
+		table.Run()
+	}
+}
+
 // Private methods
 
 func (table *Table) dealHands() (playerHand Hand, dealerHand Hand) {
