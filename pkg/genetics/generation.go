@@ -78,3 +78,9 @@ func SortByFitness(candidates []*Candidate) {
 		return candidates[i].Fitness > candidates[j].Fitness
 	})
 }
+
+func RemoveWorstPerformers(candidates []*Candidate, cutoffRate float64) []*Candidate {
+	return lo.Filter(candidates, func(candidate *Candidate, _ int) bool {
+		return candidate.Fitness >= cutoffRate
+	})
+}
