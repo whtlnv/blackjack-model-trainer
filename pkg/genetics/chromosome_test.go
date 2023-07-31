@@ -6,6 +6,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestChromosomeCreation(t *testing.T) {
+	bases := []byte("ABC")
+	sequencing := [][]byte{bases, bases, bases, bases, bases}
+	mutationRate := 0.1
+	subject := NewChromosome([]byte("AAAAA"), sequencing, mutationRate)
+
+	t.Run("Should create a chromosome with a raw genome", func(t *testing.T) {
+		want := []byte("AAAAA")
+		got := subject.Raw()
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should create a chromosome with a random genome", func(t *testing.T) {
+		randomizerMock := &RandomizerMock{}
+		randomizerMock.On("PickOne", bases).Return(byte('C'))
+
+		want := []byte("CCCCC")
+		got := NewRandomChromosome(sequencing, mutationRate, randomizerMock)
+
+		assert.Equal(t, want, got.Raw())
+	})
+}
+
 func TestChromosomeMerging(t *testing.T) {
 	bases := []byte("ABC")
 	sequencing := [][]byte{bases, bases, bases, bases, bases}

@@ -10,6 +10,15 @@ func NewChromosome(raw []byte, sequencing [][]byte, mutationRate float64) *Chrom
 	return &Chromosome{raw, sequencing, mutationRate}
 }
 
+func NewRandomChromosome(sequencing [][]byte, mutationRate float64, randomizer Randomizerish) *Chromosome {
+	raw := make([]byte, len(sequencing))
+	for i := 0; i < len(sequencing); i++ {
+		raw[i] = randomizer.PickOne(sequencing[i])
+	}
+
+	return NewChromosome(raw, sequencing, mutationRate)
+}
+
 func (chromosome *Chromosome) Raw() []byte {
 	return chromosome.raw
 }
