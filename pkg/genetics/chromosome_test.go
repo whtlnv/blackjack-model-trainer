@@ -14,7 +14,7 @@ func TestChromosomeMerging(t *testing.T) {
 	subjectB := NewChromosome([]byte("BBBBB"), sequencing, mutationRate)
 
 	t.Run("Should merge two chromosomes", func(t *testing.T) {
-		randomizerMock := &randomizerMock{}
+		randomizerMock := &RandomizerMock{}
 		// alternate between A and B
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
 		randomizerMock.On("EventDidHappen", 0.5).Return(false).Once()
@@ -30,7 +30,7 @@ func TestChromosomeMerging(t *testing.T) {
 	})
 
 	t.Run("Should mutate offspring genes", func(t *testing.T) {
-		randomizerMock := &randomizerMock{}
+		randomizerMock := &RandomizerMock{}
 		// pick all my genes
 		randomizerMock.On("EventDidHappen", 0.5).Return(true)
 		// mutate only first gene, keep the rest

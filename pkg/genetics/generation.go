@@ -94,3 +94,21 @@ func Parthenogenesis(candidates []*Candidate, randomizer Randomizerish) []*Candi
 		return &Candidate{candidate.Chromosome, -1.0}
 	})
 }
+
+func Crossover(candidates []*Candidate, randomizer Randomizerish) []*Candidate {
+	newCandidates := []*Candidate{}
+
+	for i := 0; i < len(candidates); i++ {
+		for j := i + 1; j < len(candidates); j++ {
+			if randomizer.EventDidHappen(candidates[i].Fitness * candidates[j].Fitness) {
+				numberOfChildren := randomizer.NumberBetween(1, 10)
+				for k := 0; k < numberOfChildren; k++ {
+					newGuy := candidates[i].Chromosome.Merge(candidates[j].Chromosome, randomizer)
+					newCandidates = append(newCandidates, &Candidate{newGuy, -1.0})
+				}
+			}
+		}
+	}
+
+	return newCandidates
+}
