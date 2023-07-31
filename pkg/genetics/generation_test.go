@@ -21,3 +21,24 @@ func TestNormalizeFitnessList(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestSortByFitness(t *testing.T) {
+	t.Run("Should sort a list of candidates by fitness", func(t *testing.T) {
+		input := []*Candidate{
+			{Fitness: 0.0},
+			{Fitness: 50.0},
+			{Fitness: 1.0},
+			{Fitness: 25.0},
+		}
+
+		want := []*Candidate{
+			{Fitness: 50.0},
+			{Fitness: 25.0},
+			{Fitness: 1.0},
+			{Fitness: 0.0},
+		}
+		SortByFitness(input)
+
+		assert.Equal(t, want, input)
+	})
+}

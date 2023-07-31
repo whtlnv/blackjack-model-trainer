@@ -1,6 +1,10 @@
 package genetics
 
-import "github.com/samber/lo"
+import (
+	"sort"
+
+	"github.com/samber/lo"
+)
 
 // new generation
 
@@ -9,7 +13,7 @@ import "github.com/samber/lo"
 // 					a mutation rate
 
 // ✅ normalizes fitness values
-// sorts population by fitness
+// ✅ sorts population by fitness
 
 // Selection
 // discards the worst individuals
@@ -66,5 +70,11 @@ func NormalizeFitnessList(candidates []*Candidate) []*Candidate {
 	return lo.Map(candidates, func(candidate *Candidate, _ int) *Candidate {
 		normalizedFitness := candidate.Fitness / maxFitness
 		return &Candidate{candidate.Chromosome, normalizedFitness}
+	})
+}
+
+func SortByFitness(candidates []*Candidate) {
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].Fitness > candidates[j].Fitness
 	})
 }
