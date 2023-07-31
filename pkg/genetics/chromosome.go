@@ -1,14 +1,5 @@
 package genetics
 
-// TODO: move somewhere else
-
-type Randomizerish interface {
-	EventDidHappen(probability float64) bool
-	PickOne(options []byte) byte
-}
-
-// /TODO
-
 type Chromosome struct {
 	raw          []byte
 	sequencing   [][]byte
