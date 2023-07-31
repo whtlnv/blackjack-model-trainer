@@ -61,3 +61,29 @@ func TestRemoveWorstPerformers(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestParthenogenesis(t *testing.T) {
+	t.Run("Should create a new population by cloning the best candidates", func(t *testing.T) {
+		randomizerMock := &randomizerMock{}
+		randomizerMock.On("EventDidHappen", 1.0).Return(true).Once()
+		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
+		randomizerMock.On("EventDidHappen", 0.02).Return(false).Once()
+		randomizerMock.On("EventDidHappen", 0.0).Return(false).Once()
+
+		input := []*Candidate{
+			{Chromosome: &Chromosome{raw: []byte("AAA")}, Fitness: 1.0},
+			{Chromosome: &Chromosome{raw: []byte("BBB")}, Fitness: 0.5},
+			{Chromosome: &Chromosome{raw: []byte("CCC")}, Fitness: 0.02},
+			{Chromosome: &Chromosome{raw: []byte("DDD")}, Fitness: 0.0},
+		}
+
+		want := []*Candidate{
+			{Chromosome: &Chromosome{raw: []byte("AAA")}, Fitness: -1.0},
+			{Chromosome: &Chromosome{raw: []byte("BBB")}, Fitness: -1.0},
+		}
+		got := Parthenogenesis(input, randomizerMock)
+
+		assert.Equal(t, want, got)
+		assert.NotEqual(t, &input[0], &got[0])
+	})
+}

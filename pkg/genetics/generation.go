@@ -15,13 +15,13 @@ import (
 // ✅ normalizes fitness values
 // ✅ sorts population by fitness
 
-// Selection
+// ✅ Selection
 // discards the worst individuals
 
 // availableSpace = len(population) / populationSize
 // newPopulation = []
 
-// Parthenogenesis
+// ✅ Parthenogenesis
 // for i := 0; i < len(population); i++ {
 // 		if random(normalizedFitness) {
 // 			 newGuy = population[i]
@@ -31,7 +31,7 @@ import (
 
 // Crossover
 // for i := 0; i < len(population); i++ {
-// 		for j := i; j < len(population); j++ { // only check remaining individuals
+// 		for j := i + 1; j < len(population); j++ { // only check remaining individuals
 // 			if random(normalizedFitnessA * normalizedFitnessB) {
 //         litterSize = random(1, 10) * availableSpace
 // 				 newGuy = population[i].Merge(population[j])
@@ -82,5 +82,15 @@ func SortByFitness(candidates []*Candidate) {
 func RemoveWorstPerformers(candidates []*Candidate, cutoffRate float64) []*Candidate {
 	return lo.Filter(candidates, func(candidate *Candidate, _ int) bool {
 		return candidate.Fitness >= cutoffRate
+	})
+}
+
+func Parthenogenesis(candidates []*Candidate, randomizer Randomizerish) []*Candidate {
+	filtered := lo.Filter(candidates, func(candidate *Candidate, _ int) bool {
+		return randomizer.EventDidHappen(candidate.Fitness)
+	})
+
+	return lo.Map(filtered, func(candidate *Candidate, _ int) *Candidate {
+		return &Candidate{candidate.Chromosome, -1.0}
 	})
 }
