@@ -29,7 +29,7 @@ import (
 // 		}
 // }
 
-// Crossover
+// ✅ Crossover
 // for i := 0; i < len(population); i++ {
 // 		for j := i + 1; j < len(population); j++ { // only check remaining individuals
 // 			if random(normalizedFitnessA * normalizedFitnessB) {
@@ -50,7 +50,7 @@ import (
 
 // Spontaneous generation
 // for i := 0; i < populationSize*availableSpace; i++ {
-// 	 newGuy = randomGenome()
+// 	 newGuy = ✅ randomGenome()
 // 	 newPopulation = append(newPopulation, newGuy)
 // }
 
@@ -111,4 +111,17 @@ func Crossover(candidates []*Candidate, randomizer Randomizerish) []*Candidate {
 	}
 
 	return newCandidates
+}
+
+func SpontaneousGeneration(populationSize int, sequencing [][]byte, randomizer Randomizerish) []*Candidate {
+	population := []*Candidate{}
+	for i := 0; i < populationSize; i++ {
+		newGuy := &Candidate{
+			Chromosome: NewRandomChromosome(sequencing, 0, randomizer),
+			Fitness:    -1.0,
+		}
+		population = append(population, newGuy)
+	}
+
+	return population
 }

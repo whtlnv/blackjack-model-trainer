@@ -126,3 +126,24 @@ func TestCrossover(t *testing.T) {
 		randomizerMock.AssertExpectations(t)
 	})
 }
+
+func TestSpontaneousGeneration(t *testing.T) {
+	t.Run("Should create new population by generating random chromosomes", func(t *testing.T) {
+		population := 3
+		bases := []byte("ABC")
+
+		randomizerMock := &RandomizerMock{}
+		randomizerMock.On("PickOne", bases).Return(bases[0]).Times(9)
+
+		sequencing := [][]byte{bases, bases, bases}
+
+		want := []*Candidate{
+			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
+		}
+		got := SpontaneousGeneration(population, sequencing, randomizerMock)
+
+		assert.Equal(t, want, got)
+	})
+}
