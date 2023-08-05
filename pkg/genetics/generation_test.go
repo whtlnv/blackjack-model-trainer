@@ -90,6 +90,7 @@ func TestParthenogenesis(t *testing.T) {
 
 func TestCrossover(t *testing.T) {
 	t.Run("Should create a new population by merging the best candidates", func(t *testing.T) {
+		mutationRate := 0.1
 		randomizerMock := &RandomizerMock{}
 		// mate A and B
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
@@ -107,6 +108,8 @@ func TestCrossover(t *testing.T) {
 		randomizerMock.On("EventDidHappen", 0.5).Return(false).Once()
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
 		randomizerMock.On("EventDidHappen", 0.5).Return(false).Once()
+		// do not mutate
+		randomizerMock.On("EventDidHappen", mutationRate).Return(false).Times(6)
 
 		input := []*Candidate{
 			{Chromosome: &Chromosome{raw: []byte("AAA")}, Fitness: 1.0},
@@ -119,7 +122,7 @@ func TestCrossover(t *testing.T) {
 			{Chromosome: &Chromosome{raw: []byte("ABA")}, Fitness: -1.0},
 			{Chromosome: &Chromosome{raw: []byte("BAB")}, Fitness: -1.0},
 		}
-		got := Crossover(input, randomizerMock)
+		got := Crossover(input, mutationRate, randomizerMock)
 
 		assert.Equal(t, want, got)
 		assert.NotEqual(t, &input[0], &got[0])
@@ -138,9 +141,9 @@ func TestSpontaneousGeneration(t *testing.T) {
 		sequencing := [][]byte{bases, bases, bases}
 
 		want := []*Candidate{
-			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
-			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
-			{&Chromosome{[]byte("AAA"), sequencing, 0}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
 		}
 		got := SpontaneousGeneration(population, sequencing, randomizerMock)
 

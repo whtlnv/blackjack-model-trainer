@@ -9,8 +9,7 @@ import (
 func TestChromosomeCreation(t *testing.T) {
 	bases := []byte("ABC")
 	sequencing := [][]byte{bases, bases, bases, bases, bases}
-	mutationRate := 0.1
-	subject := NewChromosome([]byte("AAAAA"), sequencing, mutationRate)
+	subject := NewChromosome([]byte("AAAAA"), sequencing)
 
 	t.Run("Should create a chromosome with a raw genome", func(t *testing.T) {
 		want := []byte("AAAAA")
@@ -23,7 +22,7 @@ func TestChromosomeCreation(t *testing.T) {
 		randomizerMock.On("PickOne", bases).Return(byte('C'))
 
 		want := []byte("CCCCC")
-		got := NewRandomChromosome(sequencing, mutationRate, randomizerMock)
+		got := NewRandomChromosome(sequencing, randomizerMock)
 
 		assert.Equal(t, want, got.Raw())
 	})
@@ -33,8 +32,8 @@ func TestChromosomeMerging(t *testing.T) {
 	bases := []byte("ABC")
 	sequencing := [][]byte{bases, bases, bases, bases, bases}
 	mutationRate := 0.1
-	subjectA := NewChromosome([]byte("AAAAA"), sequencing, mutationRate)
-	subjectB := NewChromosome([]byte("BBBBB"), sequencing, mutationRate)
+	subjectA := NewChromosome([]byte("AAAAA"), sequencing)
+	subjectB := NewChromosome([]byte("BBBBB"), sequencing)
 
 	t.Run("Should merge two chromosomes", func(t *testing.T) {
 		randomizerMock := &RandomizerMock{}
@@ -48,7 +47,7 @@ func TestChromosomeMerging(t *testing.T) {
 		randomizerMock.On("EventDidHappen", mutationRate).Return(false)
 
 		want := []byte("ABABA")
-		got := subjectA.Merge(subjectB, randomizerMock)
+		got := subjectA.Merge(subjectB, mutationRate, randomizerMock)
 		assert.Equal(t, want, got.Raw())
 	})
 
@@ -63,7 +62,7 @@ func TestChromosomeMerging(t *testing.T) {
 		randomizerMock.On("PickOne", bases).Return(byte('C')).Once()
 
 		want := []byte("CAAAA")
-		got := subjectA.Merge(subjectB, randomizerMock)
+		got := subjectA.Merge(subjectB, mutationRate, randomizerMock)
 		assert.Equal(t, want, got.Raw())
 	})
 }
