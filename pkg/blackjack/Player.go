@@ -98,6 +98,10 @@ func (player *Player) GetStatistics() PlayerStatistics {
 	}
 }
 
+func (player *Player) GetStrategy() Strategyish {
+	return player.strategy
+}
+
 // Private methods
 
 func (player *Player) subtractFromBankroll(bet int) {
