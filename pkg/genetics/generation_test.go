@@ -153,10 +153,15 @@ func TestSpontaneousGeneration(t *testing.T) {
 }
 
 func TestNewGenerationFromPrevious(t *testing.T) {
+	bases := []byte("ABC")
+	sequencing := [][]byte{bases, bases, bases}
+	options := GenerationOptions{
+		PopulationSize: 3,
+		CutoffRate:     0.5,
+		MutationRate:   0.1,
+	}
+
 	t.Run("Should create a new generation from nothing", func(t *testing.T) {
-		population := 3
-		bases := []byte("ABC")
-		sequencing := [][]byte{bases, bases, bases}
 		previous := []*Candidate{}
 
 		randomizerMock := &RandomizerMock{}
@@ -168,16 +173,13 @@ func TestNewGenerationFromPrevious(t *testing.T) {
 			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
 		}
 
-		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+		got := NewGenerationFromPrevious(previous, sequencing, options, randomizerMock)
 
 		assert.Equal(t, want, got)
 		randomizerMock.AssertExpectations(t)
 	})
 
 	t.Run("Should create a new generation from a single candidate", func(t *testing.T) {
-		population := 3
-		bases := []byte("ABC")
-		sequencing := [][]byte{bases, bases, bases}
 		previous := []*Candidate{
 			{&Chromosome{[]byte("BBB"), sequencing}, 1.0},
 		}
@@ -192,16 +194,13 @@ func TestNewGenerationFromPrevious(t *testing.T) {
 			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
 		}
 
-		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+		got := NewGenerationFromPrevious(previous, sequencing, options, randomizerMock)
 
 		assert.Equal(t, want, got)
 		randomizerMock.AssertExpectations(t)
 	})
 
 	t.Run("Should create a new generation from a list of candidates", func(t *testing.T) {
-		population := 3
-		bases := []byte("ABC")
-		sequencing := [][]byte{bases, bases, bases}
 		previous := []*Candidate{
 			{&Chromosome{[]byte("BBB"), sequencing}, 1000.0},
 			{&Chromosome{[]byte("AAA"), sequencing}, 600.0},
@@ -231,7 +230,7 @@ func TestNewGenerationFromPrevious(t *testing.T) {
 			{&Chromosome{[]byte("ABA"), sequencing}, -1.0},
 		}
 
-		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+		got := NewGenerationFromPrevious(previous, sequencing, options, randomizerMock)
 
 		assert.Equal(t, want, got)
 		randomizerMock.AssertExpectations(t)

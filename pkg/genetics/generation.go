@@ -11,6 +11,12 @@ type Candidate struct {
 	Fitness    float64
 }
 
+type GenerationOptions struct {
+	PopulationSize int
+	MutationRate   float64
+	CutoffRate     float64
+}
+
 func NormalizeFitnessList(candidates []*Candidate) []*Candidate {
 	maxFitness := lo.Reduce(candidates, func(acc float64, candidate *Candidate, _ int) float64 {
 		return lo.Max([]float64{acc, candidate.Fitness})
@@ -75,20 +81,20 @@ func SpontaneousGeneration(populationSize int, sequencing [][]byte, randomizer R
 	return population
 }
 
-func NewGenerationFromPrevious(previous []*Candidate, populationSize int, sequencing [][]byte, randomizer Randomizerish) []*Candidate {
+func NewGenerationFromPrevious(previous []*Candidate, sequencing [][]byte, options GenerationOptions, randomizer Randomizerish) []*Candidate {
 	normalized := NormalizeFitnessList(previous)
 	SortByFitness(normalized)
-	filtered := RemoveWorstPerformers(normalized, 0.5)
+	filtered := RemoveWorstPerformers(normalized, options.CutoffRate)
 
 	generation := []*Candidate{}
 
 	parthenogenesis := Parthenogenesis(filtered, randomizer)
 	generation = append(generation, parthenogenesis...)
 
-	crossover := Crossover(filtered, 0.1, randomizer)
+	crossover := Crossover(filtered, options.MutationRate, randomizer)
 	generation = append(generation, crossover...)
 
-	remainingSpace := populationSize - len(generation)
+	remainingSpace := options.PopulationSize - len(generation)
 	spontaneousGeneration := SpontaneousGeneration(remainingSpace, sequencing, randomizer)
 	generation = append(generation, spontaneousGeneration...)
 
