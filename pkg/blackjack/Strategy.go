@@ -9,6 +9,7 @@ type Strategyish interface {
 	Play(playerHand Hand, dealerHand Hand) PlayerAction
 	Bet() int
 	GetInitialBankroll() float64
+	GetEncodedStrategy() []byte
 }
 
 type Strategy struct {

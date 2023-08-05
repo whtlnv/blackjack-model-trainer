@@ -48,6 +48,9 @@ func (strategy *strategyMock) GetInitialBankroll() float64 {
 	return float64(strategy.initialBankroll)
 }
 
+// Not used in these tests
+func (strategy *strategyMock) GetEncodedStrategy() []byte { return []byte{} }
+
 type shoeMock struct{}
 
 func (shoe *shoeMock) Size() int {
