@@ -672,4 +672,11 @@ func TestPlayerGetStatistics(t *testing.T) {
 
 		assert.Equal(t, want, got)
 	})
+
+	t.Run("Should return the initial bankroll", func(t *testing.T) {
+		got := player.GetStatistics().InitialBankroll
+		want := 100.0
+
+		assert.Equal(t, want, got)
+	})
 }

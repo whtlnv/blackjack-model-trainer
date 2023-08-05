@@ -23,8 +23,9 @@ type PlayerStatistics struct {
 	GamesLost   int
 	GamesPushed int
 
-	Bankroll      float64
-	BankrollDelta float64
+	InitialBankroll float64
+	Bankroll        float64
+	BankrollDelta   float64
 }
 
 // Factory
@@ -89,12 +90,13 @@ func (player *Player) GetStatistics() PlayerStatistics {
 	bankrollDelta := player.Bankroll - player.strategy.GetInitialBankroll()
 
 	return PlayerStatistics{
-		GamesPlayed:   player.GamesPlayed,
-		GamesWon:      player.GamesWon,
-		GamesLost:     player.GamesLost,
-		GamesPushed:   gamesPushed,
-		Bankroll:      player.Bankroll,
-		BankrollDelta: bankrollDelta,
+		GamesPlayed:     player.GamesPlayed,
+		GamesWon:        player.GamesWon,
+		GamesLost:       player.GamesLost,
+		GamesPushed:     gamesPushed,
+		InitialBankroll: player.strategy.GetInitialBankroll(),
+		Bankroll:        player.Bankroll,
+		BankrollDelta:   bankrollDelta,
 	}
 }
 
