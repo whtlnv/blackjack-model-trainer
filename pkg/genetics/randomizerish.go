@@ -5,5 +5,3 @@ type Randomizerish interface {
 	PickOne(options []byte) byte
 	NumberBetween(min, max int) int
 }
-
-// TODO
