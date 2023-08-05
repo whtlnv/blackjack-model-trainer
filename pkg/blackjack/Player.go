@@ -15,6 +15,7 @@ type Player struct {
 	GamesPlayed int
 	GamesWon    int
 	GamesLost   int
+	GamesPushed int
 }
 
 type PlayerStatistics struct {
@@ -176,5 +177,7 @@ func (player *Player) updateStatistics(bet float64, won float64) {
 		player.GamesWon++
 	} else if won < bet {
 		player.GamesLost++
+	} else {
+		player.GamesPushed++
 	}
 }
