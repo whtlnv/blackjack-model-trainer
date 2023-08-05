@@ -18,6 +18,8 @@ type Player struct {
 }
 
 type PlayerStatistics struct {
+	Strategy []byte
+
 	GamesPlayed int
 	GamesWon    int
 	GamesLost   int
@@ -90,6 +92,7 @@ func (player *Player) GetStatistics() PlayerStatistics {
 	bankrollDelta := player.Bankroll - player.strategy.GetInitialBankroll()
 
 	return PlayerStatistics{
+		Strategy:        player.strategy.GetEncodedStrategy(),
 		GamesPlayed:     player.GamesPlayed,
 		GamesWon:        player.GamesWon,
 		GamesLost:       player.GamesLost,

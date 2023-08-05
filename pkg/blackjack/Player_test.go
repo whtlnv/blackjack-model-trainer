@@ -48,8 +48,9 @@ func (strategy *strategyMock) GetInitialBankroll() float64 {
 	return float64(strategy.initialBankroll)
 }
 
-// Not used in these tests
-func (strategy *strategyMock) GetEncodedStrategy() []byte { return []byte{} }
+func (strategy *strategyMock) GetEncodedStrategy() []byte {
+	return []byte("AAA")
+}
 
 type shoeMock struct{}
 
@@ -676,6 +677,13 @@ func TestPlayerGetStatistics(t *testing.T) {
 	t.Run("Should return the initial bankroll", func(t *testing.T) {
 		got := player.GetStatistics().InitialBankroll
 		want := 100.0
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return the strategy", func(t *testing.T) {
+		got := player.GetStatistics().Strategy
+		want := strategy.GetEncodedStrategy()
 
 		assert.Equal(t, want, got)
 	})
