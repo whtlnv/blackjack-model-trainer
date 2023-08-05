@@ -1,18 +1,28 @@
 package main
 
-import (
-	"github.com/whtlnv/blackjack-model-trainer/pkg/blackjack"
-	"github.com/whtlnv/blackjack-model-trainer/pkg/genetics"
-)
+type PlayerStatistics struct {
+	GamesPlayed int
+	GamesWon    int
+	GamesLost   int
+	GamesPushed int
 
-func BlackjackFitnessFunction(player *blackjack.Player, sequencing [][]byte) *genetics.Candidate {
-	playerDNA := player.GetStrategy().GetEncodedStrategy()
-	chromosome := genetics.NewChromosome(playerDNA, sequencing)
+	Bankroll      float64
+	BankrollDelta float64
+}
 
+type Playerish interface {
+	GetStatistics() PlayerStatistics
+}
+
+func BlackjackFitnessFunction(player Playerish) float64 {
 	statistics := player.GetStatistics()
 
-	return &genetics.Candidate{
-		Chromosome: chromosome,
-		Fitness:    statistics.Bankroll,
-	}
+	fitness := 0.0
+
+	fitness += statistics.Bankroll * statistics.Bankroll
+
+	winrate := float64(statistics.GamesWon) / float64(statistics.GamesPlayed)
+	fitness += winrate * 100
+
+	return fitness
 }
