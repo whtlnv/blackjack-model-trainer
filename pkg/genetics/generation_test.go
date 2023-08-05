@@ -148,5 +148,92 @@ func TestSpontaneousGeneration(t *testing.T) {
 		got := SpontaneousGeneration(population, sequencing, randomizerMock)
 
 		assert.Equal(t, want, got)
+		randomizerMock.AssertExpectations(t)
+	})
+}
+
+func TestNewGenerationFromPrevious(t *testing.T) {
+	t.Run("Should create a new generation from nothing", func(t *testing.T) {
+		population := 3
+		bases := []byte("ABC")
+		sequencing := [][]byte{bases, bases, bases}
+		previous := []*Candidate{}
+
+		randomizerMock := &RandomizerMock{}
+		randomizerMock.On("PickOne", bases).Return(bases[0]).Times(9)
+
+		want := []*Candidate{
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+		}
+
+		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+
+		assert.Equal(t, want, got)
+		randomizerMock.AssertExpectations(t)
+	})
+
+	t.Run("Should create a new generation from a single candidate", func(t *testing.T) {
+		population := 3
+		bases := []byte("ABC")
+		sequencing := [][]byte{bases, bases, bases}
+		previous := []*Candidate{
+			{&Chromosome{[]byte("BBB"), sequencing}, 1.0},
+		}
+
+		randomizerMock := &RandomizerMock{}
+		randomizerMock.On("EventDidHappen", 1.0).Return(true).Once()
+		randomizerMock.On("PickOne", bases).Return(bases[0]).Times(6)
+
+		want := []*Candidate{
+			{&Chromosome{[]byte("BBB"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, -1.0},
+		}
+
+		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+
+		assert.Equal(t, want, got)
+		randomizerMock.AssertExpectations(t)
+	})
+
+	t.Run("Should create a new generation from a list of candidates", func(t *testing.T) {
+		population := 3
+		bases := []byte("ABC")
+		sequencing := [][]byte{bases, bases, bases}
+		previous := []*Candidate{
+			{&Chromosome{[]byte("BBB"), sequencing}, 1000.0},
+			{&Chromosome{[]byte("AAA"), sequencing}, 600.0},
+			{&Chromosome{[]byte("CCC"), sequencing}, 2.0},
+		}
+
+		randomizerMock := &RandomizerMock{}
+		// clone A not B
+		randomizerMock.On("EventDidHappen", 1.0).Return(true).Once()
+		randomizerMock.On("EventDidHappen", 0.6).Return(false).Once()
+		// mate A and B
+		randomizerMock.On("EventDidHappen", 0.6).Return(true).Once()
+		// number of children
+		randomizerMock.On("NumberBetween", 1, 10).Return(2)
+		// first and second child
+		randomizerMock.On("EventDidHappen", 0.5).Return(true).Times(2)
+		randomizerMock.On("EventDidHappen", 0.5).Return(false).Times(2)
+		randomizerMock.On("EventDidHappen", 0.5).Return(true).Times(2)
+		// mutate a bit
+		randomizerMock.On("EventDidHappen", 0.1).Return(false).Times(5)
+		randomizerMock.On("EventDidHappen", 0.1).Return(true).Times(1)
+		randomizerMock.On("PickOne", bases).Return(bases[0]).Once()
+
+		want := []*Candidate{
+			{&Chromosome{[]byte("BBB"), sequencing}, -1.0},
+			{&Chromosome{[]byte("BBA"), sequencing}, -1.0},
+			{&Chromosome{[]byte("ABA"), sequencing}, -1.0},
+		}
+
+		got := NewGenerationFromPrevious(previous, population, sequencing, randomizerMock)
+
+		assert.Equal(t, want, got)
+		randomizerMock.AssertExpectations(t)
 	})
 }

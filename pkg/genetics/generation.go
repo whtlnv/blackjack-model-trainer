@@ -74,3 +74,23 @@ func SpontaneousGeneration(populationSize int, sequencing [][]byte, randomizer R
 
 	return population
 }
+
+func NewGenerationFromPrevious(previous []*Candidate, populationSize int, sequencing [][]byte, randomizer Randomizerish) []*Candidate {
+	normalized := NormalizeFitnessList(previous)
+	SortByFitness(normalized)
+	filtered := RemoveWorstPerformers(normalized, 0.5)
+
+	generation := []*Candidate{}
+
+	parthenogenesis := Parthenogenesis(filtered, randomizer)
+	generation = append(generation, parthenogenesis...)
+
+	crossover := Crossover(filtered, 0.1, randomizer)
+	generation = append(generation, crossover...)
+
+	remainingSpace := populationSize - len(generation)
+	spontaneousGeneration := SpontaneousGeneration(remainingSpace, sequencing, randomizer)
+	generation = append(generation, spontaneousGeneration...)
+
+	return generation
+}
