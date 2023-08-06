@@ -21,12 +21,28 @@ func (p *playerMock) GetStatistics() PlayerStatistics {
 // Tests
 
 func TestBlackjackFitnessFunction(t *testing.T) {
-	t.Run("A player should rank higher if they have a higher bankroll", func(t *testing.T) {
+	t.Run("A player should rank higher if they have a higher bankroll change", func(t *testing.T) {
 		playerA := &playerMock{}
-		playerA.On("GetStatistics").Return(PlayerStatistics{Bankroll: 100, GamesPlayed: 100})
+		playerA.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed: 100,
+			GamesWon:    99,
+			GamesLost:   1,
+
+			InitialBankroll: 20,
+			Bankroll:        100,
+			BankrollDelta:   80,
+		})
 
 		playerB := &playerMock{}
-		playerB.On("GetStatistics").Return(PlayerStatistics{Bankroll: 200, GamesPlayed: 100})
+		playerB.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed: 100,
+			GamesWon:    99,
+			GamesLost:   1,
+
+			InitialBankroll: 10,
+			Bankroll:        100,
+			BankrollDelta:   90,
+		})
 
 		fitnessA := BlackjackFitnessFunction(playerA)
 		fitnessB := BlackjackFitnessFunction(playerB)
@@ -37,18 +53,20 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 	t.Run("A player should rank higher if they have a higher win rate", func(t *testing.T) {
 		playerA := &playerMock{}
 		playerA.On("GetStatistics").Return(PlayerStatistics{
-			Bankroll:    100,
-			GamesPlayed: 100,
-			GamesWon:    10,
-			GamesLost:   90,
+			GamesPlayed:   100,
+			GamesWon:      10,
+			GamesLost:     90,
+			Bankroll:      200,
+			BankrollDelta: 100,
 		})
 
 		playerB := &playerMock{}
 		playerB.On("GetStatistics").Return(PlayerStatistics{
-			Bankroll:    100,
-			GamesPlayed: 100,
-			GamesWon:    20,
-			GamesLost:   80,
+			GamesPlayed:   100,
+			GamesWon:      20,
+			GamesLost:     80,
+			Bankroll:      200,
+			BankrollDelta: 100,
 		})
 
 		fitnessA := BlackjackFitnessFunction(playerA)
@@ -57,21 +75,23 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 		assert.Greater(t, fitnessB, fitnessA)
 	})
 
-	t.Run("A player should still rank higher if they have more money", func(t *testing.T) {
+	t.Run("A player should still rank higher if they have more money, even if wr is worst", func(t *testing.T) {
 		playerA := &playerMock{}
 		playerA.On("GetStatistics").Return(PlayerStatistics{
-			Bankroll:    100,
-			GamesPlayed: 100,
-			GamesWon:    99,
-			GamesLost:   1,
+			GamesPlayed:   100,
+			GamesWon:      99,
+			GamesLost:     1,
+			Bankroll:      200,
+			BankrollDelta: 100,
 		})
 
 		playerB := &playerMock{}
 		playerB.On("GetStatistics").Return(PlayerStatistics{
-			Bankroll:    101,
-			GamesPlayed: 100,
-			GamesWon:    1,
-			GamesLost:   99,
+			GamesPlayed:   100,
+			GamesWon:      1,
+			GamesLost:     99,
+			Bankroll:      201,
+			BankrollDelta: 101,
 		})
 
 		fitnessA := BlackjackFitnessFunction(playerA)
@@ -80,24 +100,53 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 		assert.Greater(t, fitnessB, fitnessA)
 	})
 
-	t.Run("A player should rank higher if they have a smaller initial bankroll", func(t *testing.T) {
-		// players := []*blackjack.Player{
-		// 	blackjack.NewPlayer(strategy0),
-		// 	blackjack.NewPlayer(strategy0),
-		// }
+	t.Run("If a player has bankroll > 0, they should rank higher if they have fewer games played", func(t *testing.T) {
+		playerA := &playerMock{}
+		playerA.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed:   20,
+			GamesWon:      10,
+			GamesLost:     10,
+			Bankroll:      200,
+			BankrollDelta: 100,
+		})
 
-		// players[0].Bankroll = 100
-		// players[0].GamesPlayed = 100
-		// players[1].Bankroll = 200
-		// players[1].GamesPlayed = 100
+		playerB := &playerMock{}
+		playerB.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed:   10,
+			GamesWon:      5,
+			GamesLost:     5,
+			Bankroll:      200,
+			BankrollDelta: 100,
+		})
 
-		// candidate0 := BlackjackFitnessFunction(players[0])
-		// candidate1 := BlackjackFitnessFunction(players[1])
+		fitnessA := BlackjackFitnessFunction(playerA)
+		fitnessB := BlackjackFitnessFunction(playerB)
 
-		// assert.Greater(t, candidate1.Fitness, candidate0.Fitness)
+		assert.Greater(t, fitnessB, fitnessA)
 	})
 
-	// t.Run("If a player has bankroll > 0, they should rank higher if they have fewer games played/won", func(t *testing.T) {})
+	t.Run("If a player has bankroll == 0, they should rank higher if they have more games played", func(t *testing.T) {
+		playerA := &playerMock{}
+		playerA.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed:   10,
+			GamesWon:      5,
+			GamesLost:     5,
+			Bankroll:      0,
+			BankrollDelta: -100,
+		})
 
-	// t.Run("If a player has bankroll < 0, they should rank higher if they have more games played", func(t *testing.T) {})
+		playerB := &playerMock{}
+		playerB.On("GetStatistics").Return(PlayerStatistics{
+			GamesPlayed:   20,
+			GamesWon:      10,
+			GamesLost:     10,
+			Bankroll:      0,
+			BankrollDelta: -100,
+		})
+
+		fitnessA := BlackjackFitnessFunction(playerA)
+		fitnessB := BlackjackFitnessFunction(playerB)
+
+		assert.Greater(t, fitnessB, fitnessA)
+	})
 }
