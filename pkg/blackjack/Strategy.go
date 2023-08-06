@@ -52,6 +52,36 @@ func NewStrategy(raw []byte) (*Strategy, error) {
 	return strategy, nil
 }
 
+// Static methods
+
+func GetSequencing() [][]byte {
+	newArrayFilledWith := func(length int, value []byte) [][]byte {
+		array := make([][]byte, length)
+		for i := range array {
+			array[i] = value
+		}
+		return array
+	}
+
+	actions := []byte("HSDP")
+	numbers := []byte("0123456789ABCDF")
+
+	hardMapLength := DealerHandCount * PlayerHardHandCount
+	softMapLength := DealerHandCount * PlayerSoftHandCount
+	pairMapLength := DealerHandCount * PlayerPairHandCount
+	bankrollLength := bankrollLength
+	bettingLength := mainBetLength
+
+	sequence := make([][]byte, 0)
+	sequence = append(sequence, newArrayFilledWith(hardMapLength, actions)...)
+	sequence = append(sequence, newArrayFilledWith(softMapLength, actions)...)
+	sequence = append(sequence, newArrayFilledWith(pairMapLength, actions)...)
+	sequence = append(sequence, newArrayFilledWith(bankrollLength, numbers)...)
+	sequence = append(sequence, newArrayFilledWith(bettingLength, numbers)...)
+
+	return sequence
+}
+
 // Public methods
 
 func (strategy *Strategy) GetInitialBankroll() float64 {

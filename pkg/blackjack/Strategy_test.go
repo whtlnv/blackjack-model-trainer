@@ -190,3 +190,10 @@ func TestStrategyReturnEncodedStrategy(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestStrategySequencing(t *testing.T) {
+	t.Run("Should the encoding sequence for strategies", func(t *testing.T) {
+		sequence := GetSequencing()
+		assert.Len(t, sequence, 348)
+	})
+}
