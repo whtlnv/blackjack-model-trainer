@@ -542,6 +542,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		assert.Equal(t, 0, len(player.Games))
 	})
 
+	t.Run("Should increase the games seen counter", func(t *testing.T) {
+		player, _ := initTest()
+
+		player.Bet()
+
+		assert.Equal(t, 1, player.GamesSeen)
+	})
+
 	t.Run("Should increase the games played counter", func(t *testing.T) {
 		player, shoe := initTest()
 
@@ -646,6 +654,7 @@ func TestPlayerGetStatistics(t *testing.T) {
 	strategy.alwaysHit = true
 
 	player := NewPlayer(strategy)
+	player.GamesSeen = 11
 	player.GamesPlayed = 10
 	player.GamesWon = 1
 	player.GamesLost = 7
@@ -653,6 +662,13 @@ func TestPlayerGetStatistics(t *testing.T) {
 	t.Run("Should return the games played", func(t *testing.T) {
 		got := player.GetStatistics().GamesPlayed
 		want := 10
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("Should return the games seen", func(t *testing.T) {
+		got := player.GetStatistics().GamesSeen
+		want := 11
 
 		assert.Equal(t, want, got)
 	})

@@ -12,6 +12,7 @@ type Player struct {
 	Bankroll float64
 	Games    []*Game
 
+	GamesSeen   int
 	GamesPlayed int
 	GamesWon    int
 	GamesLost   int
@@ -21,6 +22,7 @@ type Player struct {
 type PlayerStatistics struct {
 	Strategy []byte
 
+	GamesSeen   int
 	GamesPlayed int
 	GamesWon    int
 	GamesLost   int
@@ -46,6 +48,8 @@ func NewPlayer(strategy Strategyish) *Player {
 // Public methods
 
 func (player *Player) Bet() (willPlay bool, bet int) {
+	player.GamesSeen++
+
 	bet = player.strategy.Bet()
 	if float64(bet) > player.Bankroll {
 		return false, 0
@@ -94,6 +98,7 @@ func (player *Player) GetStatistics() PlayerStatistics {
 
 	return PlayerStatistics{
 		Strategy:        player.strategy.GetEncodedStrategy(),
+		GamesSeen:       player.GamesSeen,
 		GamesPlayed:     player.GamesPlayed,
 		GamesWon:        player.GamesWon,
 		GamesLost:       player.GamesLost,
