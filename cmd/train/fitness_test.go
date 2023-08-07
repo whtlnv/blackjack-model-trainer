@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/whtlnv/blackjack-model-trainer/pkg/blackjack"
 )
 
 // Tests
 
 func TestBlackjackFitnessFunction(t *testing.T) {
 	t.Run("A player should rank higher if they have a higher bankroll change", func(t *testing.T) {
-		playerA := PlayerStatistics{
+		playerA := blackjack.PlayerStatistics{
 			GamesPlayed: 100,
 			GamesWon:    99,
 			GamesLost:   1,
@@ -20,7 +21,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 			BankrollDelta:   80,
 		}
 
-		playerB := PlayerStatistics{
+		playerB := blackjack.PlayerStatistics{
 			GamesPlayed: 100,
 			GamesWon:    99,
 			GamesLost:   1,
@@ -37,7 +38,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 	})
 
 	t.Run("A player should rank higher if they have a higher win rate", func(t *testing.T) {
-		playerA := PlayerStatistics{
+		playerA := blackjack.PlayerStatistics{
 			GamesPlayed:   100,
 			GamesWon:      10,
 			GamesLost:     90,
@@ -45,7 +46,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 			BankrollDelta: 100,
 		}
 
-		playerB := PlayerStatistics{
+		playerB := blackjack.PlayerStatistics{
 			GamesPlayed:   100,
 			GamesWon:      20,
 			GamesLost:     80,
@@ -60,7 +61,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 	})
 
 	t.Run("A player should still rank higher if they have more money, even if wr is worst", func(t *testing.T) {
-		playerA := PlayerStatistics{
+		playerA := blackjack.PlayerStatistics{
 			GamesPlayed:   100,
 			GamesWon:      99,
 			GamesLost:     1,
@@ -68,7 +69,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 			BankrollDelta: 100,
 		}
 
-		playerB := PlayerStatistics{
+		playerB := blackjack.PlayerStatistics{
 			GamesPlayed:   100,
 			GamesWon:      1,
 			GamesLost:     99,
@@ -83,7 +84,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 	})
 
 	t.Run("If a player has bankroll > 0, they should rank higher if they have fewer games played", func(t *testing.T) {
-		playerA := PlayerStatistics{
+		playerA := blackjack.PlayerStatistics{
 			GamesPlayed:   20,
 			GamesWon:      10,
 			GamesLost:     10,
@@ -91,7 +92,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 			BankrollDelta: 100,
 		}
 
-		playerB := PlayerStatistics{
+		playerB := blackjack.PlayerStatistics{
 			GamesPlayed:   10,
 			GamesWon:      5,
 			GamesLost:     5,
@@ -106,7 +107,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 	})
 
 	t.Run("If a player has bankroll == 0, they should rank higher if they have more games played", func(t *testing.T) {
-		playerA := PlayerStatistics{
+		playerA := blackjack.PlayerStatistics{
 			GamesPlayed:   10,
 			GamesWon:      5,
 			GamesLost:     5,
@@ -114,7 +115,7 @@ func TestBlackjackFitnessFunction(t *testing.T) {
 			BankrollDelta: -100,
 		}
 
-		playerB := PlayerStatistics{
+		playerB := blackjack.PlayerStatistics{
 			GamesPlayed:   20,
 			GamesWon:      10,
 			GamesLost:     10,

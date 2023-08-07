@@ -1,20 +1,23 @@
 package main
 
-type PlayerStatistics struct {
-	Strategy []byte
+import "github.com/whtlnv/blackjack-model-trainer/pkg/blackjack"
 
-	GamesSeen   int
-	GamesPlayed int
-	GamesWon    int
-	GamesLost   int
-	GamesPushed int
+// TODO: remove dependency on external interface
+// type PlayerStatistics struct {
+// 	Strategy []byte
 
-	InitialBankroll float64
-	Bankroll        float64
-	BankrollDelta   float64
-}
+// 	GamesSeen   int
+// 	GamesPlayed int
+// 	GamesWon    int
+// 	GamesLost   int
+// 	GamesPushed int
 
-func BlackjackFitnessFunction(statistics PlayerStatistics) float64 {
+// 	InitialBankroll float64
+// 	Bankroll        float64
+// 	BankrollDelta   float64
+// }
+
+func BlackjackFitnessFunction(statistics blackjack.PlayerStatistics) float64 {
 	fitness := 0.0
 
 	if statistics.Bankroll > 0 {
