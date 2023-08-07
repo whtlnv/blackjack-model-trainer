@@ -14,13 +14,7 @@ type PlayerStatistics struct {
 	BankrollDelta   float64
 }
 
-type Playerish interface {
-	GetStatistics() PlayerStatistics
-}
-
-func BlackjackFitnessFunction(player Playerish) float64 {
-	statistics := player.GetStatistics()
-
+func BlackjackFitnessFunction(statistics PlayerStatistics) float64 {
 	fitness := 0.0
 
 	if statistics.Bankroll > 0 {
