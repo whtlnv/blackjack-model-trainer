@@ -80,6 +80,39 @@ func TestShoePeek(t *testing.T) {
 	})
 }
 
+func TestShoePeekIndex(t *testing.T) {
+	deckCount := 1
+	shoe := NewShoe(deckCount)
+
+	t.Run("Peek at 5th card", func(t *testing.T) {
+		index := 5
+		card, error := shoe.PeekAtIndex(index)
+
+		assert.Equal(t, card, shoe.cards[index])
+		assert.NoError(t, error)
+	})
+
+	t.Run("Peek at the 4th card after advancing cursor", func(t *testing.T) {
+		offset := 5
+		index := 4
+		shoe.AdvanceCursor(offset)
+		card, error := shoe.PeekAtIndex(index)
+
+		assert.Equal(t, card, shoe.cards[offset+index])
+		assert.NoError(t, error)
+	})
+
+	t.Run("Should not peek past the end of the shoe", func(t *testing.T) {
+		index := 3
+
+		shoe.AdvanceCursor(45) // cursor is now at 50
+		card, error := shoe.PeekAtIndex(index)
+
+		assert.Equal(t, card, Card{})
+		assert.Error(t, error)
+	})
+}
+
 func TestShoeAdvanceCursor(t *testing.T) {
 	deckCount := 1
 	shoe := NewShoe(deckCount)

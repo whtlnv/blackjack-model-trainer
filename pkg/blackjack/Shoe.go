@@ -91,6 +91,15 @@ func (shoe *Shoe) Peek(count int) []Card {
 	return shoe.cards[cursor : cursor+count]
 }
 
+func (shoe *Shoe) PeekAtIndex(index int) (Card, error) {
+	offsetedIndex := shoe.cursor + index
+	if offsetedIndex >= len(shoe.cards) {
+		return Card{}, &CursorOutOfBoundsError{shoe.cursor, index, len(shoe.cards)}
+	}
+
+	return shoe.cards[offsetedIndex], nil
+}
+
 func (shoe *Shoe) AdvanceCursor(offset int) (int, error) {
 	advanceTo := shoe.cursor + offset
 	if advanceTo > len(shoe.cards) {
