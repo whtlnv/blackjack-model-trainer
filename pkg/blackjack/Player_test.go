@@ -67,6 +67,12 @@ func (shoe *shoeMock) NeedsReshuffle() bool {
 	return args.Bool(0)
 }
 
+func makeMockShoe(cards []Card, err error) *shoeMock {
+	shoe := &shoeMock{}
+	shoe.On("Peek", mock.Anything).Return(cards, err)
+	return shoe
+}
+
 // Tests
 
 func TestPlayerInitialization(t *testing.T) {
@@ -167,8 +173,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 			NewCard(Three, Hearts),
 			NewCard(Three, Diamonds),
@@ -197,8 +202,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 			NewCard(Three, Hearts),
 			NewCard(Three, Diamonds),
@@ -225,8 +229,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
 
@@ -248,8 +251,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(King, Clubs),
 			NewCard(King, Hearts),
 		}, nil)
@@ -272,8 +274,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			// TODO: when split or hold is implemented, remove this
 			NewCard(King, Clubs),
 		}, nil)
@@ -296,8 +297,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
 
@@ -320,8 +320,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 			NewCard(King, Clubs),
 		}, nil)
@@ -370,8 +369,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
 
@@ -477,8 +475,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(King, Clubs),
 			NewCard(Five, Hearts),
 		}, nil)
@@ -510,8 +507,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(King, Clubs),
 			NewCard(Jack, Hearts),
 		}, nil)
@@ -543,8 +539,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Five, Clubs),
 			NewCard(Six, Hearts),
 		}, nil)
@@ -575,8 +570,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Jack, Clubs),
 		}, nil)
 
@@ -607,8 +601,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
 
@@ -667,8 +660,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Five, Clubs),
 			NewCard(Six, Hearts),
 		}, nil)
@@ -819,8 +811,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeMock{}
-		shoe.On("Peek", mock.Anything).Return([]Card{
+		shoe := makeMockShoe([]Card{
 			NewCard(Ten, Clubs),
 			NewCard(Queen, Hearts),
 		}, nil)
