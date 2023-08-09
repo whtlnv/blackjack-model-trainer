@@ -149,13 +149,23 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) int {
 	for {
 		action := player.getAction(game, dealerHand)
-		nextCard := shoe.Peek(shoeIndex + 1)[shoeIndex]
+
+		if action == Stand {
+			break
+		}
 
 		if action == SplitOrHit {
 			splitGame := game.Split()
 			player.subtractFromBankroll(splitGame.bet)
 			player.Games = append(player.Games, splitGame)
+			continue
 		}
+
+		peek := shoe.Peek(shoeIndex + 1)
+		if len(peek) < shoeIndex+1 {
+			panic("Shoe is out of cards")
+		}
+		nextCard := peek[shoeIndex]
 
 		if action == Double {
 			player.subtractFromBankroll(game.bet)
@@ -166,10 +176,6 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 		if action == Hit {
 			game.Hit(nextCard)
 			shoeIndex++
-		}
-
-		if action == Stand {
-			break
 		}
 	}
 
