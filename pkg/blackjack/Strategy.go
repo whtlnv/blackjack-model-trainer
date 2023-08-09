@@ -63,7 +63,8 @@ func GetSequencing() [][]byte {
 		return array
 	}
 
-	actions := []byte("HSDP")
+	hitStayDouble := []byte("HSD")
+	hitStayDoubleSplit := []byte("HSDP")
 	numbers := []byte("0123456789ABCDF")
 
 	hardMapLength := DealerHandCount * PlayerHardHandCount
@@ -73,9 +74,9 @@ func GetSequencing() [][]byte {
 	bettingLength := mainBetLength
 
 	sequence := make([][]byte, 0)
-	sequence = append(sequence, newArrayFilledWith(hardMapLength, actions)...)
-	sequence = append(sequence, newArrayFilledWith(softMapLength, actions)...)
-	sequence = append(sequence, newArrayFilledWith(pairMapLength, actions)...)
+	sequence = append(sequence, newArrayFilledWith(hardMapLength, hitStayDouble)...)
+	sequence = append(sequence, newArrayFilledWith(softMapLength, hitStayDouble)...)
+	sequence = append(sequence, newArrayFilledWith(pairMapLength, hitStayDoubleSplit)...)
 	sequence = append(sequence, newArrayFilledWith(bankrollLength, numbers)...)
 	sequence = append(sequence, newArrayFilledWith(bettingLength, numbers)...)
 
