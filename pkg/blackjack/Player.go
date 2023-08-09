@@ -147,39 +147,57 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 }
 
 func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) int {
-	for {
-		action := player.getAction(game, dealerHand)
-
-		if action == Stand {
-			break
-		}
-
-		if action == SplitOrHit {
-			splitGame := game.Split()
-			player.subtractFromBankroll(splitGame.bet)
-			player.Games = append(player.Games, splitGame)
-			continue
-		}
-
+	getNextCard := func() Card {
 		peek := shoe.Peek(shoeIndex + 1)
 		if len(peek) < shoeIndex+1 {
 			panic("Shoe is out of cards")
 		}
-		nextCard := peek[shoeIndex]
+		return peek[shoeIndex]
+	}
 
-		if action == Double {
-			player.subtractFromBankroll(game.bet)
-			game.Double(nextCard)
-			shoeIndex++
+	evaluateAction := func(action PlayerAction) (cardsTaken int, stop bool) {
+		switch action {
+		case Stand:
+			return 0, true
+		case SplitOrHit:
+			return player.splitOrHit(game), false
+		case Double:
+			return player.double(game, getNextCard()), false
+		case Hit:
+			return player.hit(game, getNextCard()), false
+		default:
+			panic("Unknown action")
 		}
+	}
 
-		if action == Hit {
-			game.Hit(nextCard)
-			shoeIndex++
+	for {
+		cardsUsed, stop := evaluateAction(player.getAction(game, dealerHand))
+		shoeIndex += cardsUsed
+
+		if stop {
+			break
 		}
 	}
 
 	return shoeIndex
+}
+
+func (player *Player) splitOrHit(game *Game) (cardsTaken int) {
+	splitGame := game.Split()
+	player.subtractFromBankroll(splitGame.bet)
+	player.Games = append(player.Games, splitGame)
+	return 0
+}
+
+func (player *Player) double(game *Game, nextCard Card) (cardsTaken int) {
+	player.subtractFromBankroll(game.bet)
+	game.Double(nextCard)
+	return 1
+}
+
+func (player *Player) hit(game *Game, nextCard Card) (cardsTaken int) {
+	game.Hit(nextCard)
+	return 1
 }
 
 func (player *Player) updateStatistics(bet float64, won float64) {
