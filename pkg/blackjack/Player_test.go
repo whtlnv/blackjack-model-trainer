@@ -9,135 +9,64 @@ import (
 
 // Helpers
 
-type theRealMock struct {
+type strategyMock struct {
 	mock.Mock
 }
 
-func (strategy *theRealMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
+func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
 	args := strategy.Called(playerHand, dealerHand)
 	return args.Get(0).(PlayerAction)
 }
 
-func (strategy *theRealMock) Bet() int {
+func (strategy *strategyMock) Bet() int {
 	args := strategy.Called()
 	return args.Int(0)
 }
 
-func (strategy *theRealMock) GetInitialBankroll() float64 {
+func (strategy *strategyMock) GetInitialBankroll() float64 {
 	args := strategy.Called()
 	return args.Get(0).(float64)
 }
 
-func (strategy *theRealMock) GetEncodedStrategy() []byte {
+func (strategy *strategyMock) GetEncodedStrategy() []byte {
 	args := strategy.Called()
 	return args.Get(0).([]byte)
 }
 
-type shoeeeeMock struct {
+type shoeMock struct {
 	mock.Mock
 }
 
-func (shoe *shoeeeeMock) Size() int {
+func (shoe *shoeMock) Size() int {
 	args := shoe.Called()
 	return args.Int(0)
 }
 
-func (shoe *shoeeeeMock) Peek(count int) []Card {
+func (shoe *shoeMock) Peek(count int) []Card {
 	args := shoe.Called(count)
 	return args.Get(0).([]Card)
 }
 
-func (shoe *shoeeeeMock) Shuffle() {}
+func (shoe *shoeMock) Shuffle() {}
 
-func (shoe *shoeeeeMock) AdvanceCursor(offset int) (int, error) {
+func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) {
 	args := shoe.Called(offset)
 	return args.Int(0), args.Error(1)
 }
 
-func (shoe *shoeeeeMock) SetPenetration(deckPercentage float64) {}
+func (shoe *shoeMock) SetPenetration(deckPercentage float64) {}
 
-func (shoe *shoeeeeMock) NeedsReshuffle() bool {
+func (shoe *shoeMock) NeedsReshuffle() bool {
 	args := shoe.Called()
 	return args.Bool(0)
 }
-
-type strategyMock struct {
-	initialBankroll int
-	alwaysHit       bool
-	doubleThenHit   bool
-	splitThenHit    bool
-}
-
-func (strategy *strategyMock) Play(playerHand Hand, dealerHand Hand) PlayerAction {
-	_, playerIsBusted := playerHand.Score()
-	if playerIsBusted {
-		return Stand
-	}
-
-	if strategy.splitThenHit {
-		strategy.splitThenHit = false
-		strategy.alwaysHit = true
-		return SplitOrHit
-	}
-
-	if strategy.doubleThenHit {
-		strategy.doubleThenHit = false
-		strategy.alwaysHit = true
-		return Double
-	}
-
-	if strategy.alwaysHit {
-		return Hit
-	}
-
-	return Stand
-}
-
-func (strategy *strategyMock) Bet() int {
-	return 1
-}
-
-func (strategy *strategyMock) GetInitialBankroll() float64 {
-	return float64(strategy.initialBankroll)
-}
-
-func (strategy *strategyMock) GetEncodedStrategy() []byte {
-	return []byte("AAA")
-}
-
-type shoeMock struct{}
-
-func (shoe *shoeMock) Size() int {
-	return 52
-}
-
-func (shoe *shoeMock) Peek(count int) []Card {
-	peek := []Card{
-		NewCard(Three, Clubs),
-		NewCard(Three, Hearts),
-		NewCard(Three, Diamonds),
-		NewCard(Three, Spades),
-		NewCard(Four, Clubs),
-		NewCard(Four, Hearts),
-		NewCard(Ten, Diamonds),
-		NewCard(King, Spades),
-		NewCard(Ace, Clubs),
-	}
-	return peek
-}
-
-// Not used in these tests
-func (shoe *shoeMock) Shuffle()                              {}
-func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) { return 0, nil }
-func (shoe *shoeMock) SetPenetration(deckPercentage float64) {}
-func (shoe *shoeMock) NeedsReshuffle() bool                  { return false }
 
 // Tests
 
 func TestPlayerInitialization(t *testing.T) {
 	t.Run("Should set player initial bankroll", func(t *testing.T) {
 		initialBankroll := 100.0
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(initialBankroll)
 
 		player := NewPlayer(strategy)
@@ -146,7 +75,7 @@ func TestPlayerInitialization(t *testing.T) {
 	})
 
 	t.Run("Should initialize player games", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 
 		player := NewPlayer(strategy)
@@ -155,7 +84,7 @@ func TestPlayerInitialization(t *testing.T) {
 	})
 
 	t.Run("Should initialize player games played counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 
 		player := NewPlayer(strategy)
@@ -164,7 +93,7 @@ func TestPlayerInitialization(t *testing.T) {
 	})
 
 	t.Run("Should initialize player games won counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 
 		player := NewPlayer(strategy)
@@ -173,7 +102,7 @@ func TestPlayerInitialization(t *testing.T) {
 	})
 
 	t.Run("Should initialize player games lost counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 
 		player := NewPlayer(strategy)
@@ -183,7 +112,7 @@ func TestPlayerInitialization(t *testing.T) {
 }
 
 func TestPlayerBet(t *testing.T) {
-	strategy := &theRealMock{}
+	strategy := &strategyMock{}
 	strategy.On("GetInitialBankroll").Return(100.0)
 	strategy.On("Bet").Return(1)
 
@@ -231,7 +160,7 @@ func TestPlayerBet(t *testing.T) {
 
 func TestPlayerPlay(t *testing.T) {
 	t.Run("Should return the number of cards dealt: regular", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Times(5)
@@ -239,7 +168,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 			NewCard(Three, Hearts),
@@ -259,7 +188,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -270,7 +199,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 			NewCard(Three, Hearts),
@@ -292,14 +221,14 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: double", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
@@ -315,7 +244,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -323,7 +252,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(King, Clubs),
 			NewCard(King, Hearts),
@@ -340,7 +269,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not split if no funds are available", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -348,7 +277,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			// TODO: when split or hold is implemented, remove this
 			NewCard(King, Clubs),
@@ -366,14 +295,14 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(100.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
@@ -389,7 +318,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not double if no funds are available, hit instead", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
@@ -398,7 +327,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 			NewCard(King, Clubs),
@@ -418,13 +347,13 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("No cards should be dealt if dealer has BJ (Ace up)", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1.0)
 		strategy.On("Bet").Return(1)
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ace, Clubs)
@@ -442,7 +371,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Normal game if dealer has BJ (Ace in the hole)", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Once()
@@ -450,7 +379,7 @@ func TestPlayerPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
@@ -471,12 +400,12 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not play anything (nor crash) if no bet is made", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1.0)
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		dealerUpcard := NewCard(Ten, Clubs)
 		dealerHoleCard := NewCard(Nine, Hearts)
@@ -495,14 +424,14 @@ func TestPlayerPlay(t *testing.T) {
 
 func TestPlayerBankrollAfterPlay(t *testing.T) {
 	t.Run("Should credit winnings to player bankroll", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -524,14 +453,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect player loss after game", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -553,7 +482,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings after spliting and winning one game", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -561,7 +490,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(King, Clubs),
 			NewCard(Five, Hearts),
@@ -587,7 +516,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings after spliting", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -595,7 +524,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(King, Clubs),
 			NewCard(Jack, Hearts),
@@ -621,7 +550,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect losses after spliting and losing", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -629,7 +558,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Five, Clubs),
 			NewCard(Six, Hearts),
@@ -655,14 +584,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings to player after doubling", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Jack, Clubs),
 		}, nil)
@@ -688,14 +617,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect loss after doubling", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Three, Clubs),
 		}, nil)
@@ -720,14 +649,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit initial bet when pushing", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -749,7 +678,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should clear games after resolving", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -757,7 +686,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Five, Clubs),
 			NewCard(Six, Hearts),
@@ -782,7 +711,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the games seen counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 
@@ -795,14 +724,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the games played counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -823,14 +752,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesWon counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -851,14 +780,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesLost counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(Ten, Clubs)
@@ -879,14 +808,14 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesPushed counter", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 
 		player.Bet()
 		dealerUpcard := NewCard(King, Clubs)
@@ -907,7 +836,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase counters by 1 when splitting", func(t *testing.T) {
-		strategy := &theRealMock{}
+		strategy := &strategyMock{}
 		strategy.On("GetInitialBankroll").Return(1000.0)
 		strategy.On("Bet").Return(1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
@@ -915,7 +844,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		player := NewPlayer(strategy)
 
-		shoe := &shoeeeeMock{}
+		shoe := &shoeMock{}
 		shoe.On("Peek", mock.Anything).Return([]Card{
 			NewCard(Ten, Clubs),
 			NewCard(Queen, Hearts),
@@ -944,10 +873,11 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 func TestPlayerGetStatistics(t *testing.T) {
 	strategy := &strategyMock{}
-	strategy.initialBankroll = 100
-	strategy.alwaysHit = true
+	strategy.On("GetInitialBankroll").Return(100.0)
+	strategy.On("GetEncodedStrategy").Return([]byte("AAA"))
 
 	player := NewPlayer(strategy)
+
 	player.GamesSeen = 11
 	player.GamesPlayed = 10
 	player.GamesWon = 1
