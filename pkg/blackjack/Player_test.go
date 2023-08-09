@@ -39,6 +39,12 @@ func makeMockStrategy(initialBankroll float64) *strategyMock {
 	return strategy
 }
 
+func makeMockStrategyWithBet(initialBankroll float64, bet int) *strategyMock {
+	strategy := makeMockStrategy(initialBankroll)
+	strategy.On("Bet").Return(bet)
+	return strategy
+}
+
 type shoeMock struct {
 	mock.Mock
 }
@@ -119,8 +125,7 @@ func TestPlayerInitialization(t *testing.T) {
 }
 
 func TestPlayerBet(t *testing.T) {
-	strategy := makeMockStrategy(100.0)
-	strategy.On("Bet").Return(1)
+	strategy := makeMockStrategyWithBet(100.0, 1)
 
 	t.Run("Should decide to play a hand if has funds", func(t *testing.T) {
 		player := NewPlayer(strategy)
@@ -166,8 +171,7 @@ func TestPlayerBet(t *testing.T) {
 
 func TestPlayerPlay(t *testing.T) {
 	t.Run("Should return the number of cards dealt: regular", func(t *testing.T) {
-		strategy := makeMockStrategy(100.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Times(5)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
@@ -192,8 +196,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
-		strategy := makeMockStrategy(100.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Times(4)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
@@ -223,8 +226,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should return the number of cards dealt: double", func(t *testing.T) {
-		strategy := makeMockStrategy(100.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
@@ -244,8 +246,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
-		strategy := makeMockStrategy(100.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
@@ -267,8 +268,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not split if no funds are available", func(t *testing.T) {
-		strategy := makeMockStrategy(1.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
@@ -291,8 +291,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
-		strategy := makeMockStrategy(100.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
@@ -312,8 +311,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Should not double if no funds are available, hit instead", func(t *testing.T) {
-		strategy := makeMockStrategy(1.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
@@ -339,11 +337,8 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("No cards should be dealt if dealer has BJ (Ace up)", func(t *testing.T) {
-		strategy := makeMockStrategy(1.0)
-		strategy.On("Bet").Return(1)
-
+		strategy := makeMockStrategyWithBet(1.0, 1)
 		player := NewPlayer(strategy)
-
 		shoe := &shoeMock{}
 
 		player.Bet()
@@ -362,8 +357,7 @@ func TestPlayerPlay(t *testing.T) {
 	})
 
 	t.Run("Normal game if dealer has BJ (Ace in the hole)", func(t *testing.T) {
-		strategy := makeMockStrategy(1.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
@@ -412,8 +406,7 @@ func TestPlayerPlay(t *testing.T) {
 
 func TestPlayerBankrollAfterPlay(t *testing.T) {
 	t.Run("Should credit winnings to player bankroll", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -440,8 +433,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect player loss after game", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -468,8 +460,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings after spliting and winning one game", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
@@ -500,8 +491,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings after spliting", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
@@ -532,8 +522,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect losses after spliting and losing", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
@@ -564,8 +553,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit winnings to player after doubling", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
@@ -595,8 +583,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should reflect loss after doubling", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Double).Once()
 
 		player := NewPlayer(strategy)
@@ -625,8 +612,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should credit initial bet when pushing", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -653,8 +639,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should clear games after resolving", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
@@ -684,8 +669,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the games seen counter", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 
 		player := NewPlayer(strategy)
 
@@ -696,8 +680,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the games played counter", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -723,8 +706,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesWon counter", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -750,8 +732,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesLost counter", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -777,8 +758,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase the gamesPushed counter", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 
 		player := NewPlayer(strategy)
@@ -804,8 +784,7 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 	})
 
 	t.Run("Should increase counters by 1 when splitting", func(t *testing.T) {
-		strategy := makeMockStrategy(1000.0)
-		strategy.On("Bet").Return(1)
+		strategy := makeMockStrategyWithBet(1000.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Times(2)
 
