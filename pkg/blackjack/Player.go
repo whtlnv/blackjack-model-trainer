@@ -143,6 +143,20 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 		return Hit
 	}
 
+	if idealAction == SplitOrStand && player.Bankroll < float64(game.bet) {
+		return Stand
+	}
+
+	// // if the ideal action is to splitOrHit, but we already have, hit instead
+	// if idealAction == SplitOrHit && game.IsSplit {
+	// 	return Hit
+	// }
+
+	// // if the ideal action is to splitOrStand, but we already have, stand instead
+	// if idealAction == SplitOrStand && game.IsSplit {
+	// 	return Stand
+	// }
+
 	return idealAction
 }
 
@@ -178,6 +192,8 @@ func (player *Player) takeTurn(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 		case Stand:
 			return 0, true
 		case SplitOrHit:
+			return player.splitOrHit(game), false
+		case SplitOrStand:
 			return player.splitOrHit(game), false
 		case Double:
 			return player.double(game, getNextCard()), false

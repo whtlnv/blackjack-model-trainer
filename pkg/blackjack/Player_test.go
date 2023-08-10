@@ -198,9 +198,37 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 5, cardsTaken)
 	})
 
-	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
+	t.Run("Should return the number of cards dealt: splitOrHit", func(t *testing.T) {
 		strategy := makeMockStrategyWithBet(100.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
+		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Times(4)
+		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
+		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Once()
+		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
+
+		player := NewPlayer(strategy)
+
+		shoe := makeMockShoe([]Card{
+			NewCard(Three, Clubs),
+			NewCard(Three, Hearts),
+			NewCard(Three, Diamonds),
+			NewCard(Three, Spades),
+			NewCard(Four, Clubs),
+			NewCard(Four, Hearts),
+			NewCard(Ten, Diamonds),
+		}, nil)
+
+		player.Bet()
+
+		playerHand := Hand{NewCard(Three, Clubs), NewCard(Three, Hearts)}
+		cardsTaken := player.Play(playerHand, Hand{}, shoe)
+
+		assert.Equal(t, 7, cardsTaken)
+	})
+
+	t.Run("Should return the number of cards dealt: splitOrStand", func(t *testing.T) {
+		strategy := makeMockStrategyWithBet(100.0, 1)
+		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrStand).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Times(4)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Hit).Once()
@@ -264,7 +292,7 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 98.0, player.Bankroll)
 	})
 
-	t.Run("Should not split, just hit, if no funds are available", func(t *testing.T) {
+	t.Run("Should not split if no funds are available, hit instead", func(t *testing.T) {
 		strategy := makeMockStrategyWithBet(1.0, 1)
 		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrHit).Once()
 		strategy.On("Play", mock.Anything, mock.Anything).Return(Stand).Once()
@@ -285,25 +313,22 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 1, cardsTaken)
 	})
 
-	// t.Run("Should not split, just stand, if no funds are available", func(t *testing.T) {
-	// 	strategy := makeMockStrategyWithBet(1.0, 1)
-	// 	strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrStand).Once()
+	t.Run("Should not split if no funds are available, stand instead", func(t *testing.T) {
+		strategy := makeMockStrategyWithBet(1.0, 1)
+		strategy.On("Play", mock.Anything, mock.Anything).Return(SplitOrStand).Once()
 
-	// 	player := NewPlayer(strategy)
+		player := NewPlayer(strategy)
+		shoe := makeMockShoe([]Card{}, nil)
 
-	// 	shoe := makeMockShoe([]Card{}, nil)
+		player.Bet()
+		playerHand := Hand{NewCard(King, Clubs), NewCard(King, Hearts)}
 
-	// 	player.Bet()
-	// 	playerHand := Hand{NewCard(King, Clubs), NewCard(King, Hearts)}
+		cardsTaken := player.Play(playerHand, Hand{}, shoe)
 
-	// 	player.Play(playerHand, Hand{}, shoe)
-
-	// 	assert.Equal(t, 0.0, player.Bankroll)
-	// 	assert.Equal(t, 1, len(player.Games))
-	// 	assert.Equal(t, 2, len(player.Games[0].hand))
-	//
-	//
-	// })
+		assert.Equal(t, 0.0, player.Bankroll)
+		assert.Equal(t, 1, len(player.Games))
+		assert.Equal(t, 0, cardsTaken)
+	})
 
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
 		strategy := makeMockStrategyWithBet(100.0, 1)
