@@ -160,7 +160,7 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 	return idealAction
 }
 
-func (player *Player) splitOrHit(game *Game) (cardsTaken int) {
+func (player *Player) split(game *Game) (cardsTaken int) {
 	splitGame := game.Split()
 	player.subtractFromBankroll(splitGame.bet)
 	player.Games = append(player.Games, splitGame)
@@ -192,9 +192,9 @@ func (player *Player) takeTurn(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 		case Stand:
 			return 0, true
 		case SplitOrHit:
-			return player.splitOrHit(game), false
+			return player.split(game), false
 		case SplitOrStand:
-			return player.splitOrHit(game), false
+			return player.split(game), false
 		case Double:
 			return player.double(game, getNextCard()), false
 		case Hit:
