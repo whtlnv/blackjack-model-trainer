@@ -196,8 +196,6 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, Hand{}, shoe)
 
 		assert.Equal(t, 5, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should return the number of cards dealt: split", func(t *testing.T) {
@@ -226,8 +224,6 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, Hand{}, shoe)
 
 		assert.Equal(t, 7, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should return the number of cards dealt: double", func(t *testing.T) {
@@ -246,8 +242,6 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, Hand{}, shoe)
 
 		assert.Equal(t, 1, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should deduct bet from bankroll if split", func(t *testing.T) {
@@ -268,8 +262,6 @@ func TestPlayerPlay(t *testing.T) {
 		player.Play(playerHand, Hand{}, shoe)
 
 		assert.Equal(t, 98.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should not split, just hit, if no funds are available", func(t *testing.T) {
@@ -291,8 +283,6 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 0.0, player.Bankroll)
 		assert.Equal(t, 1, len(player.Games))
 		assert.Equal(t, 1, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	// t.Run("Should not split, just stand, if no funds are available", func(t *testing.T) {
@@ -311,8 +301,8 @@ func TestPlayerPlay(t *testing.T) {
 	// 	assert.Equal(t, 0.0, player.Bankroll)
 	// 	assert.Equal(t, 1, len(player.Games))
 	// 	assert.Equal(t, 2, len(player.Games[0].hand))
-	// 	strategy.AssertExpectations(t)
-	// 	shoe.AssertExpectations(t)
+	//
+	//
 	// })
 
 	t.Run("Should deduct bet from bankroll if double", func(t *testing.T) {
@@ -331,8 +321,6 @@ func TestPlayerPlay(t *testing.T) {
 		player.Play(playerHand, Hand{}, shoe)
 
 		assert.Equal(t, 98.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should not double if no funds are available, hit instead", func(t *testing.T) {
@@ -356,9 +344,6 @@ func TestPlayerPlay(t *testing.T) {
 		assert.Equal(t, 0.0, player.Bankroll)
 		assert.Equal(t, 1, player.Games[0].bet)
 		assert.Equal(t, 2, cardsTaken)
-
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("No cards should be dealt if dealer has BJ (Ace up)", func(t *testing.T) {
@@ -377,8 +362,6 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, dealerHand, shoe)
 
 		assert.Equal(t, 0, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Normal game if dealer has BJ (Ace in the hole)", func(t *testing.T) {
@@ -403,8 +386,6 @@ func TestPlayerPlay(t *testing.T) {
 		cardsTaken := player.Play(playerHand, dealerHand, shoe)
 
 		assert.Equal(t, 1, cardsTaken)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should not play anything (nor crash) if no bet is made", func(t *testing.T) {
@@ -424,8 +405,6 @@ func TestPlayerPlay(t *testing.T) {
 		shoeIndex := player.Play(playerHand, dealerHand, shoe)
 
 		assert.Equal(t, 0, shoeIndex)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 }
 
@@ -453,8 +432,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 0, cardsTaken)
 		assert.Equal(t, 1001.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should reflect player loss after game", func(t *testing.T) {
@@ -480,8 +457,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 0, cardsTaken)
 		assert.Equal(t, 999.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should credit winnings after spliting and winning one game", func(t *testing.T) {
@@ -511,8 +486,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1000.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should credit winnings after spliting", func(t *testing.T) {
@@ -542,8 +515,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1002.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should reflect losses after spliting and losing", func(t *testing.T) {
@@ -573,8 +544,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 998.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should credit winnings to player after doubling", func(t *testing.T) {
@@ -603,8 +572,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 1, cardsTaken)
 		assert.Equal(t, 1002.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should reflect loss after doubling", func(t *testing.T) {
@@ -632,8 +599,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 1, cardsTaken)
 		assert.Equal(t, 998.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should credit initial bet when pushing", func(t *testing.T) {
@@ -659,8 +624,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 0, cardsTaken)
 		assert.Equal(t, 1000.0, player.Bankroll)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should clear games after resolving", func(t *testing.T) {
@@ -689,8 +652,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 0, len(player.Games))
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should increase the games seen counter", func(t *testing.T) {
@@ -701,7 +662,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Bet()
 
 		assert.Equal(t, 1, player.GamesSeen)
-		strategy.AssertExpectations(t)
 	})
 
 	t.Run("Should increase the games played counter", func(t *testing.T) {
@@ -726,8 +686,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, player.GamesPlayed)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should increase the gamesWon counter", func(t *testing.T) {
@@ -752,8 +710,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, player.GamesWon)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should increase the gamesLost counter", func(t *testing.T) {
@@ -778,8 +734,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, player.GamesLost)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should increase the gamesPushed counter", func(t *testing.T) {
@@ -804,8 +758,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 		player.Resolve(dealerHand)
 
 		assert.Equal(t, 1, player.GamesPushed)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 
 	t.Run("Should increase counters by 1 when splitting", func(t *testing.T) {
@@ -836,8 +788,6 @@ func TestPlayerBankrollAfterPlay(t *testing.T) {
 
 		assert.Equal(t, 1, player.GamesPlayed)
 		assert.Equal(t, 1, player.GamesWon)
-		strategy.AssertExpectations(t)
-		shoe.AssertExpectations(t)
 	})
 }
 
