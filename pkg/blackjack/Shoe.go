@@ -12,6 +12,7 @@ type Shoeish interface {
 	AdvanceCursor(offset int) (int, error)
 	SetPenetration(deckPercentage float64)
 	NeedsReshuffle() bool
+	PeekAtIndex(index int) (Card, error)
 }
 
 type Shoe struct {

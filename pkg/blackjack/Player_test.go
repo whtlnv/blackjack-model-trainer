@@ -59,6 +59,11 @@ func (shoe *shoeMock) Peek(count int) []Card {
 	return args.Get(0).([]Card)
 }
 
+func (shoe *shoeMock) PeekAtIndex(index int) (Card, error) {
+	args := shoe.Called(index)
+	return args.Get(0).(Card), args.Error(1)
+}
+
 func (shoe *shoeMock) Shuffle() {}
 
 func (shoe *shoeMock) AdvanceCursor(offset int) (int, error) {

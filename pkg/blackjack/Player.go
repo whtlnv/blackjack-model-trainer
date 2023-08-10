@@ -146,7 +146,25 @@ func (player *Player) getAction(game *Game, dealerHand Hand) PlayerAction {
 	return idealAction
 }
 
-func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) int {
+func (player *Player) splitOrHit(game *Game) (cardsTaken int) {
+	splitGame := game.Split()
+	player.subtractFromBankroll(splitGame.bet)
+	player.Games = append(player.Games, splitGame)
+	return 0
+}
+
+func (player *Player) double(game *Game, nextCard Card) (cardsTaken int) {
+	player.subtractFromBankroll(game.bet)
+	game.Double(nextCard)
+	return 1
+}
+
+func (player *Player) hit(game *Game, nextCard Card) (cardsTaken int) {
+	game.Hit(nextCard)
+	return 1
+}
+
+func (player *Player) takeTurn(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) (cardsTaken int, stop bool) {
 	getNextCard := func() Card {
 		peek := shoe.Peek(shoeIndex + 1)
 		if len(peek) < shoeIndex+1 {
@@ -170,8 +188,12 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 		}
 	}
 
+	return evaluateAction(player.getAction(game, dealerHand))
+}
+
+func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIndex int) int {
 	for {
-		cardsUsed, stop := evaluateAction(player.getAction(game, dealerHand))
+		cardsUsed, stop := player.takeTurn(game, dealerHand, shoe, shoeIndex)
 		shoeIndex += cardsUsed
 
 		if stop {
@@ -180,24 +202,6 @@ func (player *Player) playGame(game *Game, dealerHand Hand, shoe Shoeish, shoeIn
 	}
 
 	return shoeIndex
-}
-
-func (player *Player) splitOrHit(game *Game) (cardsTaken int) {
-	splitGame := game.Split()
-	player.subtractFromBankroll(splitGame.bet)
-	player.Games = append(player.Games, splitGame)
-	return 0
-}
-
-func (player *Player) double(game *Game, nextCard Card) (cardsTaken int) {
-	player.subtractFromBankroll(game.bet)
-	game.Double(nextCard)
-	return 1
-}
-
-func (player *Player) hit(game *Game, nextCard Card) (cardsTaken int) {
-	game.Hit(nextCard)
-	return 1
 }
 
 func (player *Player) updateStatistics(bet float64, won float64) {
