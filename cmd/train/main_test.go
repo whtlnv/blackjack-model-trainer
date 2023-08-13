@@ -2,4 +2,6 @@ package main
 
 import "testing"
 
-func Test(t *testing.T) {}
+func TestTrainingSession(t *testing.T) {
+	trainingSession()
+}

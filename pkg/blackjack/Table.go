@@ -44,6 +44,7 @@ func (table *Table) RunMany(games int) {
 		}
 
 		table.Run()
+		println("Game", i+1, "of", games)
 	}
 }
 
