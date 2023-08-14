@@ -90,7 +90,10 @@ func TestParthenogenesis(t *testing.T) {
 
 func TestCrossover(t *testing.T) {
 	t.Run("Should create a new population by merging the best candidates", func(t *testing.T) {
-		mutationRate := 0.1
+		options := GenerationOptions{
+			PopulationSize: 30,
+			MutationRate:   0.1,
+		}
 		randomizerMock := &RandomizerMock{}
 		// mate A and B
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
@@ -109,7 +112,7 @@ func TestCrossover(t *testing.T) {
 		randomizerMock.On("EventDidHappen", 0.5).Return(true).Once()
 		randomizerMock.On("EventDidHappen", 0.5).Return(false).Once()
 		// do not mutate
-		randomizerMock.On("EventDidHappen", mutationRate).Return(false).Times(6)
+		randomizerMock.On("EventDidHappen", options.MutationRate).Return(false).Times(6)
 
 		input := []*Candidate{
 			{Chromosome: &Chromosome{raw: []byte("AAA")}, Fitness: 1.0},
@@ -122,12 +125,42 @@ func TestCrossover(t *testing.T) {
 			{Chromosome: &Chromosome{raw: []byte("ABA")}, Fitness: -1.0},
 			{Chromosome: &Chromosome{raw: []byte("BAB")}, Fitness: -1.0},
 		}
-		got := Crossover(input, mutationRate, randomizerMock)
+		got := Crossover(input, options, randomizerMock)
 
 		assert.Equal(t, want, got)
 		assert.NotEqual(t, &input[0], &got[0])
 		randomizerMock.AssertExpectations(t)
 	})
+
+	// t.Run("Should not exceed max candidates", func(t *testing.T) {
+	// 	options := GenerationOptions{
+	// 		PopulationSize: 2,
+	// 		MutationRate:   0.1,
+	// 	}
+	// 	randomizerMock := &RandomizerMock{}
+	// 	// accept all mates
+	// 	randomizerMock.On("EventDidHappen", 0.5).Return(true)
+	// 	randomizerMock.On("EventDidHappen", 0.02).Return(true)
+	// 	randomizerMock.On("EventDidHappen", 0.0).Return(true)
+	// 	randomizerMock.On("EventDidHappen", 0.01).Return(true)
+	// 	// always produce max children
+	// 	randomizerMock.On("NumberBetween", mock.Anything, mock.Anything).Return(10)
+	// 	// do not mutate
+	// 	randomizerMock.On("EventDidHappen", options.MutationRate).Return(false)
+
+	// 	input := []*Candidate{
+	// 		{Chromosome: &Chromosome{raw: []byte("AAA")}, Fitness: 1.0},
+	// 		{Chromosome: &Chromosome{raw: []byte("BBB")}, Fitness: 0.5},
+	// 		{Chromosome: &Chromosome{raw: []byte("CCC")}, Fitness: 0.02},
+	// 		{Chromosome: &Chromosome{raw: []byte("DDD")}, Fitness: 0.0},
+	// 	}
+
+	// 	want := 2
+	// 	got := len(Crossover(input, options, randomizerMock))
+
+	// 	assert.Equal(t, want, got)
+	// 	randomizerMock.AssertExpectations(t)
+	// })
 }
 
 func TestSpontaneousGeneration(t *testing.T) {

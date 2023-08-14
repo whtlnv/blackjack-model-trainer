@@ -50,7 +50,8 @@ func Parthenogenesis(candidates []*Candidate, randomizer Randomizerish) []*Candi
 	})
 }
 
-func Crossover(candidates []*Candidate, mutationRate float64, randomizer Randomizerish) []*Candidate {
+func Crossover(candidates []*Candidate, options GenerationOptions, randomizer Randomizerish) []*Candidate {
+	mutationRate := options.MutationRate
 	newCandidates := []*Candidate{}
 
 	for i := 0; i < len(candidates); i++ {
@@ -91,7 +92,7 @@ func NewGenerationFromPrevious(previous []*Candidate, sequencing [][]byte, optio
 	parthenogenesis := Parthenogenesis(filtered, randomizer)
 	generation = append(generation, parthenogenesis...)
 
-	crossover := Crossover(filtered, options.MutationRate, randomizer)
+	crossover := Crossover(filtered, options, randomizer)
 	generation = append(generation, crossover...)
 
 	remainingSpace := options.PopulationSize - len(generation)
